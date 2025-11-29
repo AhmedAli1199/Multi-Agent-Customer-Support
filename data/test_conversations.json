@@ -1,0 +1,702 @@
+[
+  {
+    "conversation_id": "test_0000",
+    "customer_query": "awnna call customer support",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0001",
+    "customer_query": "I need to set up the new delivery address, how to do it?",
+    "intent": "set_up_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0002",
+    "customer_query": "i want assistance asking for a restitution of my money",
+    "intent": "get_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0003",
+    "customer_query": "ya have an address to submit some feedback abouta product",
+    "intent": "review",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0004",
+    "customer_query": "where to see what payment methods are available?",
+    "intent": "check_payment_methods",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0005",
+    "customer_query": "help checking in which cases can I ask to be reimbursed",
+    "intent": "check_refund_policy",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0006",
+    "customer_query": "change to {{Account Type}} account",
+    "intent": "switch_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0007",
+    "customer_query": "do you have a toll-free number to contact customer support?",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0008",
+    "customer_query": "I need assistance to inform of a payment issue",
+    "intent": "payment_issue",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0009",
+    "customer_query": "where to inform of errors with sign-up?",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0010",
+    "customer_query": "can you help me make a complaint against your company?",
+    "intent": "complaint",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0011",
+    "customer_query": "I am trying to cancel purchaes {{Order Number}}",
+    "intent": "cancel_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0012",
+    "customer_query": "i do not know how to cancel order {{Order Number}}",
+    "intent": "cancel_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0013",
+    "customer_query": "remove something from order",
+    "intent": "change_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0014",
+    "customer_query": "can i check the shipping methods",
+    "intent": "delivery_options",
+    "expected_response_type": "DELIVERY",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0015",
+    "customer_query": "I need assistance to switch to a new account",
+    "intent": "switch_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0016",
+    "customer_query": "help me purchase some of your product",
+    "intent": "place_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0017",
+    "customer_query": "could you help me notify of payment problems?",
+    "intent": "payment_issue",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0018",
+    "customer_query": "I do not know what to do to get a compensation",
+    "intent": "get_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0019",
+    "customer_query": "would you give me information about my {{Account Type}} account removal?",
+    "intent": "delete_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0020",
+    "customer_query": "leave review for your company",
+    "intent": "review",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0021",
+    "customer_query": "uare not helpful at all help me talk to a goddamnagent",
+    "intent": "contact_human_agent",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0022",
+    "customer_query": "have problems with the lost PIN code",
+    "intent": "recover_password",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0023",
+    "customer_query": "i dont know what i have to do to inform of a sign-up error",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0024",
+    "customer_query": "can you help me request a rebate of money?",
+    "intent": "get_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0025",
+    "customer_query": "I don't know how to see the restitution status",
+    "intent": "track_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0026",
+    "customer_query": "could utell me more abouut creating a {{Account Type}} account",
+    "intent": "create_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0027",
+    "customer_query": "i dont know what to do to open a pro account for my dad",
+    "intent": "create_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0028",
+    "customer_query": "i have got to see in which situations can i request a refund",
+    "intent": "check_refund_policy",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0029",
+    "customer_query": "find information about lost access key",
+    "intent": "recover_password",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0030",
+    "customer_query": "how can i download the bill from {{Person Name}}",
+    "intent": "get_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0031",
+    "customer_query": "want help recovering the pass of my profile",
+    "intent": "recover_password",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0032",
+    "customer_query": "how can I check the status of the restitution?",
+    "intent": "track_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0033",
+    "customer_query": "can ya help me contactsomebody",
+    "intent": "contact_human_agent",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0034",
+    "customer_query": "edit details on premium account",
+    "intent": "edit_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0035",
+    "customer_query": "I am trying to find the shipping perod",
+    "intent": "delivery_period",
+    "expected_response_type": "DELIVERY",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0036",
+    "customer_query": "can you help me to report a problem with signup?",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0037",
+    "customer_query": "I don't know what to do to seak to a person",
+    "intent": "contact_human_agent",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0038",
+    "customer_query": "i need help to see my compensation status",
+    "intent": "track_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0039",
+    "customer_query": "I forgot the PIN of my profile, can I retrieve it?",
+    "intent": "recover_password",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0040",
+    "customer_query": "need to cancel the company newslettef subscription help me",
+    "intent": "newsletter_subscription",
+    "expected_response_type": "SUBSCRIPTION",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0041",
+    "customer_query": "how doi see at what time i can reach customer support",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0042",
+    "customer_query": "i have to switch some bloody products of order {{Order Number}}",
+    "intent": "change_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0043",
+    "customer_query": "i do not know what i need to do to buy several items",
+    "intent": "place_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0044",
+    "customer_query": "i want assisgance cancelling order {{Order Number}}",
+    "intent": "cancel_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0045",
+    "customer_query": "I don't know how to acquire several of your article",
+    "intent": "place_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0046",
+    "customer_query": "i dont know what i have to od to download my invoice #00108",
+    "intent": "get_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0047",
+    "customer_query": "is it possible to inform of sign-up problems?",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0048",
+    "customer_query": "need help to set up my delivery address",
+    "intent": "set_up_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0049",
+    "customer_query": "I want to send feedback for your company, help me",
+    "intent": "review",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0050",
+    "customer_query": "use gold acdcount",
+    "intent": "switch_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0051",
+    "customer_query": "I have got to correct the data on my account, help me",
+    "intent": "edit_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0052",
+    "customer_query": "where do i check the status of order {{Order Number}}",
+    "intent": "track_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0053",
+    "customer_query": "i need assistance to notify of an error with registrations",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0054",
+    "customer_query": "I want help to enter my secondary delivery adrdess",
+    "intent": "set_up_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0055",
+    "customer_query": "help me request a compensation of money",
+    "intent": "get_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0056",
+    "customer_query": "can i see ur abailable payment methods",
+    "intent": "check_payment_methods",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0057",
+    "customer_query": "i have got to check my bills from {{Person Name}} how to do it",
+    "intent": "check_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0058",
+    "customer_query": "wasnt assistance to set up a delivery address",
+    "intent": "set_up_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0059",
+    "customer_query": "I have to give a quick look at the invoice #00108",
+    "intent": "check_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0060",
+    "customer_query": "help me seeing what hours I can contact customer assistance",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0061",
+    "customer_query": "is there a way to leave some feedback for your products?",
+    "intent": "review",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0062",
+    "customer_query": "i dont know how to notify of troublse with payments",
+    "intent": "payment_issue",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0063",
+    "customer_query": "I want help seeing your available payment options",
+    "intent": "check_payment_methods",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0064",
+    "customer_query": "assistance to inform of a trouble with online payments",
+    "intent": "payment_issue",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0065",
+    "customer_query": "want help to see the shipping options",
+    "intent": "delivery_options",
+    "expected_response_type": "DELIVERY",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0066",
+    "customer_query": "I can no longer afford order {{Order Number}}, can I cancel it?",
+    "intent": "cancel_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0067",
+    "customer_query": "i need assistance to leave a review about ur company",
+    "intent": "review",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0068",
+    "customer_query": "where do I check what hours I can call customer service?",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0069",
+    "customer_query": "modify details on standard account",
+    "intent": "edit_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0070",
+    "customer_query": "want assistace seeing my bill #12588",
+    "intent": "check_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0071",
+    "customer_query": "how to update my  shipping address?",
+    "intent": "change_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0072",
+    "customer_query": "i have an error setting the delivery address up",
+    "intent": "set_up_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0073",
+    "customer_query": "I want assistance to notify of goddamn issues with payments",
+    "intent": "payment_issue",
+    "expected_response_type": "PAYMENT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0074",
+    "customer_query": "want assistance to download the inovices from {{Person Name}}",
+    "intent": "get_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0075",
+    "customer_query": "reporting issue opening user profile",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0076",
+    "customer_query": "i have to see order {{Order Number}} current status i need help",
+    "intent": "track_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0077",
+    "customer_query": "I awnt to lodge a customer complaint against your company",
+    "intent": "complaint",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0078",
+    "customer_query": "information about the termination of a {{Account Type}} account",
+    "intent": "delete_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0079",
+    "customer_query": "I want to buy an article",
+    "intent": "place_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0080",
+    "customer_query": "where can I check the withdrawal charge?",
+    "intent": "check_cancellation_fee",
+    "expected_response_type": "CANCEL",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0081",
+    "customer_query": "how can I get information about a lost access key?",
+    "intent": "recover_password",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0082",
+    "customer_query": "I need to subscribe to the company newsletter, how to do it?",
+    "intent": "newsletter_subscription",
+    "expected_response_type": "SUBSCRIPTION",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0083",
+    "customer_query": "I have got to reuqest rebates of money",
+    "intent": "get_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0084",
+    "customer_query": "i do not know how i can report a registration problem",
+    "intent": "registration_problems",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0085",
+    "customer_query": "I need help locating my bill #85632",
+    "intent": "check_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0086",
+    "customer_query": "what do i have to do to open a {{Account Category}} account",
+    "intent": "create_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0087",
+    "customer_query": "i have got to buy some prodcuts",
+    "intent": "place_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0088",
+    "customer_query": "want assistance making a claim against ur company",
+    "intent": "complaint",
+    "expected_response_type": "FEEDBACK",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0089",
+    "customer_query": "I want assistance to remove a pro account",
+    "intent": "delete_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0090",
+    "customer_query": "i dont know what i have to do to download my invoice #00108",
+    "intent": "get_invoice",
+    "expected_response_type": "INVOICE",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0091",
+    "customer_query": "I try to check what hours customer support available is",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0092",
+    "customer_query": "I am waiting for a compensation of {{Currency Symbol}}{{Refund Amount}}",
+    "intent": "track_refund",
+    "expected_response_type": "REFUND",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0093",
+    "customer_query": "could you help me modify the shipping address?",
+    "intent": "change_shipping_address",
+    "expected_response_type": "SHIPPING",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0094",
+    "customer_query": "I need to see order {{Order Number}} bloody status, can you help me?",
+    "intent": "track_order",
+    "expected_response_type": "ORDER",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0095",
+    "customer_query": "I have to see how soon can I expect the purchase",
+    "intent": "delivery_period",
+    "expected_response_type": "DELIVERY",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0096",
+    "customer_query": "you aren't helpful, assistance chatting with an operator",
+    "intent": "contact_human_agent",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0097",
+    "customer_query": "can I check at what time I can call custoer assistance?",
+    "intent": "contact_customer_service",
+    "expected_response_type": "CONTACT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0098",
+    "customer_query": "help me to change to the goddamn {{Account Category}} account",
+    "intent": "switch_account",
+    "expected_response_type": "ACCOUNT",
+    "ground_truth_action": null
+  },
+  {
+    "conversation_id": "test_0099",
+    "customer_query": "help checking when my article is going to arrive",
+    "intent": "delivery_period",
+    "expected_response_type": "DELIVERY",
+    "ground_truth_action": null
+  }
+]
