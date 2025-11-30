@@ -1,0 +1,323 @@
+{
+  "products": [
+    {
+      "product_id": "LAPTOP-001",
+      "name": "TechPro X1 Ultra Laptop",
+      "category": "Laptops & Computers",
+      "brand": "TechPro",
+      "price": 1299.99,
+      "in_stock": true,
+      "stock_quantity": 45,
+      "description": "Premium 15.6\" laptop with Intel Core i7, 16GB RAM, 512GB SSD. Perfect for professionals and content creators.",
+      "specifications": {
+        "processor": "Intel Core i7-12700H",
+        "ram": "16GB DDR5",
+        "storage": "512GB NVMe SSD",
+        "display": "15.6\" Full HD IPS (1920x1080)",
+        "graphics": "Intel Iris Xe Graphics",
+        "battery": "Up to 10 hours",
+        "weight": "3.5 lbs",
+        "os": "Windows 11 Pro"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.7,
+      "reviews_count": 2847
+    },
+    {
+      "product_id": "LAPTOP-002",
+      "name": "UltraBook Air 13",
+      "category": "Laptops & Computers",
+      "brand": "UltraBook",
+      "price": 899.99,
+      "in_stock": true,
+      "stock_quantity": 62,
+      "description": "Lightweight 13\" ultrabook, perfect for students and travelers. All-day battery life.",
+      "specifications": {
+        "processor": "Intel Core i5-1240P",
+        "ram": "8GB DDR4",
+        "storage": "256GB SSD",
+        "display": "13.3\" Full HD IPS",
+        "graphics": "Integrated Intel UHD",
+        "battery": "Up to 12 hours",
+        "weight": "2.4 lbs",
+        "os": "Windows 11 Home"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.5,
+      "reviews_count": 1523
+    },
+    {
+      "product_id": "PHONE-001",
+      "name": "SmartPhone Pro 14",
+      "category": "Smartphones & Tablets",
+      "brand": "SmartPhone",
+      "price": 799.99,
+      "in_stock": true,
+      "stock_quantity": 128,
+      "description": "Latest flagship smartphone with 6.5\" OLED display, triple camera system, 5G connectivity.",
+      "specifications": {
+        "display": "6.5\" OLED (2400x1080)",
+        "processor": "Snapdragon 8 Gen 2",
+        "ram": "8GB",
+        "storage": "128GB (expandable)",
+        "camera": "50MP + 12MP + 8MP triple camera",
+        "battery": "4500mAh with fast charging",
+        "connectivity": "5G, Wi-Fi 6E, Bluetooth 5.3",
+        "os": "Android 14"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.8,
+      "reviews_count": 5621
+    },
+    {
+      "product_id": "PHONE-002",
+      "name": "Budget Smartphone X5",
+      "category": "Smartphones & Tablets",
+      "brand": "ValueTech",
+      "price": 249.99,
+      "in_stock": true,
+      "stock_quantity": 203,
+      "description": "Affordable smartphone with great battery life and reliable performance.",
+      "specifications": {
+        "display": "6.1\" LCD (1600x720)",
+        "processor": "MediaTek Helio G85",
+        "ram": "4GB",
+        "storage": "64GB (expandable)",
+        "camera": "13MP + 2MP dual camera",
+        "battery": "5000mAh",
+        "connectivity": "4G LTE, Wi-Fi 5, Bluetooth 5.0",
+        "os": "Android 13"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.2,
+      "reviews_count": 892
+    },
+    {
+      "product_id": "HEADPHONE-001",
+      "name": "NoiseCancel Pro Headphones",
+      "category": "Audio & Headphones",
+      "brand": "AudioMax",
+      "price": 299.99,
+      "in_stock": true,
+      "stock_quantity": 87,
+      "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life.",
+      "specifications": {
+        "type": "Over-ear, Wireless",
+        "noise_cancellation": "Active ANC",
+        "battery": "Up to 30 hours (ANC on), 40 hours (ANC off)",
+        "connectivity": "Bluetooth 5.2, 3.5mm jack",
+        "drivers": "40mm dynamic drivers",
+        "features": "Multipoint pairing, voice assistant support"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.6,
+      "reviews_count": 3241
+    },
+    {
+      "product_id": "HEADPHONE-002",
+      "name": "SoundBuds True Wireless Earbuds",
+      "category": "Audio & Headphones",
+      "brand": "SoundBuds",
+      "price": 79.99,
+      "in_stock": true,
+      "stock_quantity": 312,
+      "description": "Compact wireless earbuds with charging case. Perfect for workouts and commuting.",
+      "specifications": {
+        "type": "In-ear, True Wireless",
+        "battery": "6 hours (earbuds), 24 hours (with case)",
+        "connectivity": "Bluetooth 5.0",
+        "water_resistance": "IPX4",
+        "features": "Touch controls, voice assistant"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.3,
+      "reviews_count": 1876
+    },
+    {
+      "product_id": "SMART-001",
+      "name": "SmartHome Hub Pro",
+      "category": "Smart Home Devices",
+      "brand": "SmartHome",
+      "price": 129.99,
+      "in_stock": true,
+      "stock_quantity": 156,
+      "description": "Central hub for all your smart home devices. Works with Alexa, Google Home, and more.",
+      "specifications": {
+        "compatibility": "Alexa, Google Assistant, Apple HomeKit",
+        "connectivity": "Wi-Fi, Zigbee, Z-Wave, Bluetooth",
+        "ports": "2x USB, Ethernet",
+        "features": "Voice control, automation routines, energy monitoring"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.5,
+      "reviews_count": 2103
+    },
+    {
+      "product_id": "SMART-002",
+      "name": "Smart LED Light Bulbs (4-Pack)",
+      "category": "Smart Home Devices",
+      "brand": "BrightLife",
+      "price": 49.99,
+      "in_stock": true,
+      "stock_quantity": 428,
+      "description": "Color-changing smart bulbs with app and voice control. No hub required.",
+      "specifications": {
+        "brightness": "800 lumens (60W equivalent)",
+        "colors": "16 million colors + warm to cool white",
+        "connectivity": "Wi-Fi (2.4GHz)",
+        "compatibility": "Alexa, Google Assistant, Siri",
+        "lifespan": "25,000 hours"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.4,
+      "reviews_count": 5432
+    },
+    {
+      "product_id": "GAMING-001",
+      "name": "ProGamer Mechanical Keyboard",
+      "category": "Gaming & Accessories",
+      "brand": "GameMaster",
+      "price": 149.99,
+      "in_stock": true,
+      "stock_quantity": 93,
+      "description": "RGB mechanical gaming keyboard with customizable keys and anti-ghosting.",
+      "specifications": {
+        "switch_type": "Cherry MX Red (linear)",
+        "backlight": "RGB per-key customization",
+        "connectivity": "USB-C wired",
+        "features": "Programmable macros, N-key rollover, media controls",
+        "build": "Aluminum frame"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.7,
+      "reviews_count": 1654
+    },
+    {
+      "product_id": "GAMING-002",
+      "name": "Precision Gaming Mouse",
+      "category": "Gaming & Accessories",
+      "brand": "GameMaster",
+      "price": 69.99,
+      "in_stock": true,
+      "stock_quantity": 167,
+      "description": "High-precision wireless gaming mouse with 16,000 DPI sensor.",
+      "specifications": {
+        "sensor": "16,000 DPI optical",
+        "connectivity": "2.4GHz wireless + Bluetooth",
+        "battery": "Up to 70 hours",
+        "buttons": "8 programmable buttons",
+        "weight": "89g (customizable weights included)"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.6,
+      "reviews_count": 2187
+    },
+    {
+      "product_id": "WATCH-001",
+      "name": "FitTrack Pro Smartwatch",
+      "category": "Wearables & Fitness",
+      "brand": "FitTrack",
+      "price": 199.99,
+      "in_stock": true,
+      "stock_quantity": 142,
+      "description": "Advanced fitness smartwatch with heart rate monitoring, GPS, and sleep tracking.",
+      "specifications": {
+        "display": "1.4\" AMOLED touchscreen",
+        "battery": "Up to 7 days",
+        "sensors": "Heart rate, SpO2, GPS, accelerometer, gyroscope",
+        "water_resistance": "5 ATM (50m)",
+        "compatibility": "iOS and Android",
+        "features": "100+ workout modes, stress monitoring, notifications"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.5,
+      "reviews_count": 3892
+    },
+    {
+      "product_id": "CHARGER-001",
+      "name": "PowerBank Ultra 20000mAh",
+      "category": "Power Banks & Chargers",
+      "brand": "PowerTech",
+      "price": 39.99,
+      "in_stock": true,
+      "stock_quantity": 276,
+      "description": "High-capacity portable charger with fast charging for multiple devices.",
+      "specifications": {
+        "capacity": "20,000mAh",
+        "ports": "2x USB-A, 1x USB-C",
+        "fast_charging": "18W PD and QC 3.0",
+        "input": "USB-C (18W)",
+        "weight": "12.8 oz"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.6,
+      "reviews_count": 4521
+    },
+    {
+      "product_id": "MONITOR-001",
+      "name": "UltraView 27\" 4K Monitor",
+      "category": "Computer Accessories",
+      "brand": "ViewTech",
+      "price": 449.99,
+      "in_stock": true,
+      "stock_quantity": 34,
+      "description": "27-inch 4K IPS monitor with HDR support, perfect for creative work and gaming.",
+      "specifications": {
+        "screen_size": "27 inches",
+        "resolution": "3840x2160 (4K UHD)",
+        "panel_type": "IPS",
+        "refresh_rate": "60Hz",
+        "response_time": "5ms",
+        "connectivity": "HDMI 2.0, DisplayPort 1.4, USB-C",
+        "features": "HDR10, 99% sRGB, height adjustable stand"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.7,
+      "reviews_count": 1234
+    },
+    {
+      "product_id": "TABLET-001",
+      "name": "TabPro 11 Tablet",
+      "category": "Smartphones & Tablets",
+      "brand": "TabPro",
+      "price": 549.99,
+      "in_stock": false,
+      "stock_quantity": 0,
+      "expected_restock": "2025-12-10",
+      "description": "11-inch premium tablet with stylus support. Ideal for productivity and entertainment.",
+      "specifications": {
+        "display": "11\" LCD (2000x1200)",
+        "processor": "Snapdragon 870",
+        "ram": "6GB",
+        "storage": "128GB (expandable)",
+        "camera": "13MP rear, 8MP front",
+        "battery": "8000mAh",
+        "os": "Android 14",
+        "features": "Stylus included, keyboard case compatible"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.6,
+      "reviews_count": 987
+    },
+    {
+      "product_id": "CABLE-001",
+      "name": "USB-C to USB-C Cable (6ft, 2-Pack)",
+      "category": "Cables & Adapters",
+      "brand": "TechGear",
+      "price": 14.99,
+      "in_stock": true,
+      "stock_quantity": 892,
+      "description": "Durable braided USB-C cables supporting 100W fast charging and data transfer.",
+      "specifications": {
+        "length": "6 feet",
+        "power_delivery": "100W (20V/5A)",
+        "data_transfer": "Up to 480Mbps (USB 2.0)",
+        "build": "Braided nylon, reinforced connectors",
+        "compatibility": "All USB-C devices"
+      },
+      "warranty": "2-year standard warranty",
+      "rating": 4.8,
+      "reviews_count": 6789
+    }
+  ]
+}

@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from typing import Dict, List
 import json
 import time
-from config import TEST_DATASET_FILE, DATA_DIR
+from config import TEST_DATASET_FILE, DATA_DIR, EvalConfig
 from orchestration.state import AgentState
 from agents.triage_agent import TriageAgent
 from agents.knowledge_agent import KnowledgeAgent
@@ -164,6 +164,9 @@ class AblationStudy:
             try:
                 result = config_func(query)
                 results.append(result)
+
+                # Rate limit delay
+                time.sleep(EvalConfig.RATE_LIMIT_DELAY)
 
                 if (i + 1) % 10 == 0:
                     print(f"  Processed {i + 1}/{sample_size} queries...")

@@ -1,0 +1,140 @@
+{
+  "company_name": "TechGear Electronics",
+  "tagline": "Your Trusted Technology Partner",
+  "founded": "2015",
+  "headquarters": "San Francisco, CA, USA",
+  "description": "TechGear Electronics is a leading online retailer specializing in premium electronics, smart home devices, and technology accessories. We pride ourselves on offering cutting-edge products with exceptional customer service.",
+
+  "contact": {
+    "customer_support_phone": "1-800-TECHGEAR (1-800-832-4432)",
+    "customer_support_email": "support@techgear.com",
+    "support_hours": {
+      "chat": "24/7 Live Chat Available",
+      "phone": "Monday-Friday: 9:00 AM - 9:00 PM EST, Saturday-Sunday: 10:00 AM - 6:00 PM EST",
+      "email": "Response within 24 hours"
+    },
+    "website": "https://www.techgear.com",
+    "social_media": {
+      "twitter": "@TechGearSupport",
+      "facebook": "facebook.com/TechGearElectronics",
+      "instagram": "@techgearelectronics"
+    }
+  },
+
+  "policies": {
+    "returns": {
+      "return_window": "30 days from delivery date",
+      "condition": "Items must be in original packaging, unused, and in resalable condition",
+      "restocking_fee": "No restocking fee for standard returns",
+      "exceptions": "Opened software, personalized items, and final sale items are not returnable",
+      "how_to_return": "Initiate return request through your account or contact customer support"
+    },
+
+    "refunds": {
+      "processing_time": "5-7 business days after receiving returned item",
+      "refund_method": "Original payment method",
+      "shipping_cost": "Original shipping costs are non-refundable unless item was defective",
+      "partial_refunds": "Available for damaged or missing parts without full return"
+    },
+
+    "warranty": {
+      "standard_warranty": "2-year limited warranty on all electronics",
+      "extended_warranty": "Optional 3-year or 5-year extended warranty available at purchase",
+      "coverage": "Manufacturer defects, hardware failures (excludes physical damage, water damage, or misuse)",
+      "claim_process": "Contact support with order number and description of issue"
+    },
+
+    "shipping": {
+      "free_shipping_threshold": "$50 or more",
+      "standard_shipping": {
+        "cost": "$5.99 (free over $50)",
+        "delivery_time": "5-7 business days",
+        "tracking": "Provided via email"
+      },
+      "express_shipping": {
+        "cost": "$14.99",
+        "delivery_time": "2-3 business days",
+        "tracking": "Provided via email and SMS"
+      },
+      "overnight_shipping": {
+        "cost": "$29.99",
+        "delivery_time": "Next business day (order by 2 PM EST)",
+        "tracking": "Provided via email and SMS"
+      },
+      "international_shipping": "Available to Canada and select countries, calculated at checkout"
+    },
+
+    "price_matching": {
+      "enabled": true,
+      "terms": "We'll match any authorized retailer's price within 14 days of purchase",
+      "exclusions": "Marketplace sellers, auction sites, and unauthorized retailers excluded",
+      "how_to_claim": "Contact support with proof of lower price"
+    },
+
+    "order_cancellation": {
+      "before_shipping": "Can cancel anytime before order ships - full refund",
+      "after_shipping": "Cannot cancel, but can refuse delivery or initiate return",
+      "processing_orders": "Orders in 'Processing' status can usually be cancelled - contact support immediately"
+    },
+
+    "order_modification": {
+      "address_change": "Possible if order hasn't shipped yet",
+      "item_change": "Possible if order is in 'Processing' status - contact support",
+      "shipping_upgrade": "Available until order ships - price difference charged"
+    }
+  },
+
+  "payment_methods": {
+    "accepted": [
+      "Visa, MasterCard, American Express, Discover",
+      "PayPal",
+      "Apple Pay",
+      "Google Pay",
+      "TechGear Gift Cards",
+      "Affirm (Buy Now, Pay Later)"
+    ],
+    "security": "All transactions secured with 256-bit SSL encryption",
+    "payment_plans": "Interest-free payment plans available through Affirm on purchases over $500"
+  },
+
+  "account_benefits": {
+    "free_account": [
+      "Order tracking and history",
+      "Faster checkout with saved addresses",
+      "Exclusive email deals and early access to sales",
+      "Product reviews and ratings"
+    ],
+    "premium_membership": {
+      "cost": "$99/year or $9.99/month",
+      "benefits": [
+        "Free 2-day shipping on all orders",
+        "Extended 45-day return window",
+        "Priority customer support",
+        "Exclusive discounts (up to 15% off)",
+        "Early access to new product launches",
+        "Free tech support consultations"
+      ]
+    }
+  },
+
+  "product_categories": [
+    "Laptops & Computers",
+    "Smartphones & Tablets",
+    "Audio & Headphones",
+    "Smart Home Devices",
+    "Gaming & Accessories",
+    "Wearables & Fitness",
+    "Cameras & Photography",
+    "Computer Accessories",
+    "Cables & Adapters",
+    "Power Banks & Chargers"
+  ],
+
+  "values": [
+    "Customer satisfaction is our #1 priority",
+    "Quality products from trusted brands only",
+    "Fast, reliable shipping and easy returns",
+    "Expert technical support available",
+    "Competitive pricing with price match guarantee"
+  ]
+}

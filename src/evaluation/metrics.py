@@ -203,6 +203,9 @@ class MetricsEvaluator:
 
                 results.append(result)
 
+                # Rate limit delay
+                time.sleep(EvalConfig.RATE_LIMIT_DELAY)
+
                 if (i + 1) % 10 == 0:
                     print(f"  Processed {i + 1}/{sample_size} queries...")
 

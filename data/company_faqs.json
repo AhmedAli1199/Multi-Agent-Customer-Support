@@ -1,0 +1,107 @@
+[
+  {
+    "id": "company_001",
+    "question": "What is TechGear Electronics?",
+    "answer": "TechGear Electronics is your trusted technology partner, founded in 2015 and headquartered in San Francisco, CA. We're a leading online retailer specializing in premium electronics, smart home devices, and technology accessories. We pride ourselves on offering cutting-edge products with exceptional customer service, backed by our price match guarantee and 2-year warranty on all electronics.",
+    "intent": "company_info",
+    "category": "COMPANY"
+  },
+  {
+    "id": "company_002",
+    "question": "How can I contact TechGear customer support?",
+    "answer": "You can reach TechGear customer support through multiple channels:\n\n- **24/7 Live Chat**: Available on our website https://www.techgear.com\n- **Phone**: 1-800-TECHGEAR (1-800-832-4432)\n  - Monday-Friday: 9:00 AM - 9:00 PM EST\n  - Saturday-Sunday: 10:00 AM - 6:00 PM EST\n- **Email**: support@techgear.com (response within 24 hours)\n- **Social Media**: @TechGearSupport on Twitter\n\nOur dedicated support team is here to help!",
+    "intent": "contact_support",
+    "category": "CONTACT"
+  },
+  {
+    "id": "return_001",
+    "question": "What is TechGear's return policy?",
+    "answer": "TechGear offers a generous 30-day return policy:\n\n- **Return Window**: 30 days from delivery date\n- **Condition**: Items must be in original packaging, unused, and in resalable condition\n- **No Restocking Fee**: We don't charge restocking fees for standard returns\n- **Exceptions**: Opened software, personalized items, and final sale items cannot be returned\n- **How to Return**: Initiate a return request through your account at www.techgear.com or contact our support team\n\nPremium members enjoy an extended 45-day return window!",
+    "intent": "check_return_policy",
+    "category": "RETURNS"
+  },
+  {
+    "id": "refund_001",
+    "question": "How long does it take to get a refund from TechGear?",
+    "answer": "TechGear processes refunds efficiently:\n\n- **Processing Time**: 5-7 business days after we receive your returned item\n- **Refund Method**: Original payment method used for purchase\n- **Shipping Costs**: Original shipping costs are non-refundable unless the item was defective or our error\n- **Partial Refunds**: Available for items with damaged or missing parts without requiring a full return\n\nYou'll receive an email notification once your refund has been processed.",
+    "intent": "get_refund",
+    "category": "REFUND"
+  },
+  {
+    "id": "shipping_001",
+    "question": "What shipping options does TechGear offer?",
+    "answer": "TechGear provides flexible shipping options:\n\n**Standard Shipping**\n- Cost: $5.99 (FREE on orders $50+)\n- Delivery: 5-7 business days\n- Tracking included\n\n**Express Shipping**\n- Cost: $14.99\n- Delivery: 2-3 business days\n- Email + SMS tracking\n\n**Overnight Shipping**\n- Cost: $29.99\n- Delivery: Next business day (order by 2 PM EST)\n- Email + SMS tracking\n\n**Premium Members**: Get FREE 2-day shipping on ALL orders!\n\nInternational shipping available to Canada and select countries.",
+    "intent": "check_shipping_options",
+    "category": "SHIPPING"
+  },
+  {
+    "id": "warranty_001",
+    "question": "What warranty does TechGear provide?",
+    "answer": "All TechGear electronics come with comprehensive warranty coverage:\n\n- **Standard Warranty**: 2-year limited warranty on all electronics\n- **Extended Warranty Options**: 3-year or 5-year plans available at purchase\n- **Coverage**: Manufacturer defects and hardware failures\n- **Not Covered**: Physical damage, water damage, or misuse\n- **Claim Process**: Contact support@techgear.com with your order number and description of the issue\n\nOur warranty gives you peace of mind with your technology purchases!",
+    "intent": "check_warranty",
+    "category": "WARRANTY"
+  },
+  {
+    "id": "payment_001",
+    "question": "What payment methods does TechGear accept?",
+    "answer": "TechGear accepts multiple secure payment methods:\n\n- **Credit Cards**: Visa, MasterCard, American Express, Discover\n- **Digital Wallets**: PayPal, Apple Pay, Google Pay\n- **Gift Cards**: TechGear gift cards\n- **Buy Now, Pay Later**: Affirm (interest-free plans on purchases over $500)\n\n**Security**: All transactions are protected with 256-bit SSL encryption to keep your information safe.\n\nChoose the payment method that works best for you!",
+    "intent": "check_payment_methods",
+    "category": "PAYMENT"
+  },
+  {
+    "id": "cancel_001",
+    "question": "Can I cancel my TechGear order?",
+    "answer": "Yes! TechGear's order cancellation policy:\n\n- **Before Shipping**: You can cancel anytime before your order ships for a full refund\n- **Processing Orders**: Orders in 'Processing' status can usually be cancelled - contact support immediately at 1-800-TECHGEAR\n- **After Shipping**: Cannot cancel, but you can refuse delivery or initiate a return within 30 days\n- **How to Cancel**: Log into your account, go to 'My Orders', find your order, and click 'Cancel Order', or contact customer support\n\nAct fast for best results - contact us right away!",
+    "intent": "cancel_order",
+    "category": "ORDER"
+  },
+  {
+    "id": "modify_001",
+    "question": "Can I modify my TechGear order after placing it?",
+    "answer": "TechGear allows order modifications in certain situations:\n\n- **Address Change**: Possible if order hasn't shipped yet - contact support immediately\n- **Item Change**: Possible if order is in 'Processing' status - call 1-800-TECHGEAR\n- **Shipping Upgrade**: Available until order ships - you'll be charged the price difference\n- **Add Items**: Not possible - you'll need to place a separate order\n\n**Important**: Time is critical! Contact us as soon as possible for the best chance of modifying your order.",
+    "intent": "modify_order",
+    "category": "ORDER"
+  },
+  {
+    "id": "track_001",
+    "question": "How do I track my TechGear order?",
+    "answer": "Tracking your TechGear order is easy:\n\n1. **Email Notification**: You'll receive a shipping confirmation email with your tracking number\n2. **Online Tracking**: Log into your account at www.techgear.com and go to 'My Orders'\n3. **Direct Tracking**: Click the tracking link in your email to see real-time updates\n4. **SMS Updates**: Express and Overnight orders include SMS tracking notifications\n\n**Order Status Meanings**:\n- Processing: We're preparing your order\n- Shipped: Order is on its way to you\n- Out for Delivery: Arriving today\n- Delivered: Package has arrived\n\nTypical delivery times: Standard (5-7 days), Express (2-3 days), Overnight (next day).",
+    "intent": "track_order",
+    "category": "ORDER"
+  },
+  {
+    "id": "account_001",
+    "question": "What are the benefits of creating a TechGear account?",
+    "answer": "Creating a free TechGear account gives you:\n\n**Free Account Benefits**:\n- Order tracking and complete order history\n- Faster checkout with saved addresses and payment methods\n- Exclusive email deals and early access to sales\n- Ability to write product reviews and ratings\n- Wishlist to save items for later\n\n**Premium Membership** ($99/year or $9.99/month):\n- FREE 2-day shipping on all orders\n- Extended 45-day return window\n- Priority customer support\n- Exclusive discounts (up to 15% off)\n- Early access to new product launches\n- Free tech support consultations\n\nSign up today at www.techgear.com/register!",
+    "intent": "create_account",
+    "category": "ACCOUNT"
+  },
+  {
+    "id": "price_match_001",
+    "question": "Does TechGear offer price matching?",
+    "answer": "Yes! TechGear has a price match guarantee:\n\n- **Match Period**: We'll match any authorized retailer's price within 14 days of your purchase\n- **Eligible Retailers**: Authorized retailers only (not marketplace sellers or auction sites)\n- **How to Claim**: Contact support@techgear.com with proof of the lower price (screenshot or link)\n- **Refund**: We'll refund the difference to your original payment method\n\n**Exclusions**: \n- Marketplace sellers (Amazon third-party, eBay, etc.)\n- Auction sites\n- Unauthorized retailers\n- Special promotional bundles\n\nWe're committed to offering you the best prices!",
+    "intent": "price_match",
+    "category": "PRICING"
+  },
+  {
+    "id": "product_001",
+    "question": "What products does TechGear sell?",
+    "answer": "TechGear offers a wide range of premium technology products:\n\n**Product Categories**:\n- **Laptops & Computers**: Premium laptops, ultrabooks, desktops\n- **Smartphones & Tablets**: Latest flagship and budget-friendly phones, tablets\n- **Audio & Headphones**: Wireless headphones, earbuds, speakers\n- **Smart Home Devices**: Hubs, smart bulbs, security cameras, thermostats\n- **Gaming & Accessories**: Mechanical keyboards, gaming mice, controllers\n- **Wearables & Fitness**: Smartwatches, fitness trackers\n- **Cameras & Photography**: DSLR, mirrorless, action cameras\n- **Computer Accessories**: Monitors, keyboards, mice, webcams\n- **Cables & Adapters**: USB-C, HDMI, display cables\n- **Power Banks & Chargers**: Portable chargers, wireless charging pads\n\nAll products come with our 2-year warranty and 30-day return policy!",
+    "intent": "browse_products",
+    "category": "PRODUCTS"
+  },
+  {
+    "id": "stock_001",
+    "question": "How do I know if a product is in stock at TechGear?",
+    "answer": "Checking TechGear product availability is simple:\n\n- **Product Page**: Stock status is shown on every product page\n  - 'In Stock': Ready to ship immediately\n  - 'Low Stock': Limited quantity available\n  - 'Out of Stock': Currently unavailable\n  - 'Pre-Order': Available for pre-order with expected date\n\n- **Restock Notifications**: For out-of-stock items, click 'Notify Me' to receive an email when back in stock\n\n- **Alternative Products**: We'll suggest similar in-stock alternatives\n\n- **Customer Support**: Call 1-800-TECHGEAR for real-time inventory checks\n\nWe update our inventory in real-time to give you accurate information!",
+    "intent": "check_availability",
+    "category": "PRODUCTS"
+  },
+  {
+    "id": "recommend_001",
+    "question": "Can TechGear help me choose the right product?",
+    "answer": "Absolutely! TechGear offers expert product guidance:\n\n**Free Resources**:\n- **Product Comparison Tool**: Compare specs side-by-side on our website\n- **Customer Reviews**: Read real customer experiences and ratings\n- **Buying Guides**: Detailed guides for laptops, phones, headphones, and more\n- **Live Chat**: Get instant recommendations from our product experts (24/7)\n\n**Premium Member Benefits**:\n- **Free Tech Consultations**: Schedule a call with our product specialists\n- **Personalized Recommendations**: Based on your needs and budget\n\nJust tell us what you're looking for, and we'll help you find the perfect match!",
+    "intent": "product_recommendation",
+    "category": "PRODUCTS"
+  }
+]

@@ -13,7 +13,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from orchestration.graph import multi_agent_workflow
+from orchestration.graph_v2 import multi_agent_workflow_v2
 from baseline.single_agent import single_agent
 from config import PROJECT_ROOT
 import time
@@ -83,9 +83,9 @@ async def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "components": {
-            "multi_agent_system": "operational",
+            "multi_agent_system": "operational (V2)",
             "single_agent_baseline": "operational",
             "knowledge_base": "operational",
             "vector_store": "operational (with fallback)",
@@ -131,7 +131,7 @@ async def chat(request: ChatRequest):
                 "metadata": None
             }
 
-            final_state = multi_agent_workflow.invoke(initial_state)
+            final_state = multi_agent_workflow_v2.invoke(initial_state)
 
             response = ChatResponse(
                 response=final_state.get("final_response", "I apologize, but I couldn't process your request."),

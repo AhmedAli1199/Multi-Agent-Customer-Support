@@ -2426,6 +2426,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "chromadb" },
+    { name = "colorama" },
     { name = "datasets" },
     { name = "fastapi" },
     { name = "google-generativeai" },
@@ -2453,6 +2454,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "chromadb", specifier = ">=0.4.22" },
+    { name = "colorama", specifier = ">=0.4.6" },
     { name = "datasets", specifier = ">=2.14.0" },
     { name = "fastapi", specifier = ">=0.109.0" },
     { name = "google-generativeai", specifier = ">=0.8.0" },

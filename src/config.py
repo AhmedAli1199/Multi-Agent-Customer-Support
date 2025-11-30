@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # Load environment variables
-load_dotenv()
+load_dotenv(override=True)
 
 # Project paths
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -62,6 +62,7 @@ class EvalConfig:
     TEST_SAMPLE_SIZE = 100  # Number of conversations for evaluation
     CSAT_SCALE = (1, 5)  # CSAT score range
     CONFIDENCE_THRESHOLD = 0.7  # Minimum confidence for automated resolution
+    RATE_LIMIT_DELAY = 20  # Seconds to wait between requests to avoid rate limits
 
 # Dataset configurations
 class DatasetConfig:
