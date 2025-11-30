@@ -19,7 +19,7 @@ def main():
     print(f"Started at: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
 
     # Configuration
-    SAMPLE_SIZE = 20  # Reduced for faster testing, increase for full evaluation
+    SAMPLE_SIZE = 5  # Reduced for faster testing, increase for full evaluation
 
     print(f"Configuration:")
     print(f"  - Sample size: {SAMPLE_SIZE} queries")

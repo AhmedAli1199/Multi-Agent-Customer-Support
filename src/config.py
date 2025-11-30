@@ -59,10 +59,10 @@ class AgentConfig:
 # Evaluation configurations
 class EvalConfig:
     """Configuration for evaluation metrics"""
-    TEST_SAMPLE_SIZE = 100  # Number of conversations for evaluation
+    TEST_SAMPLE_SIZE = 5  # Number of conversations for evaluation
     CSAT_SCALE = (1, 5)  # CSAT score range
     CONFIDENCE_THRESHOLD = 0.7  # Minimum confidence for automated resolution
-    RATE_LIMIT_DELAY = 20  # Seconds to wait between requests to avoid rate limits
+    RATE_LIMIT_DELAY = 30  # Seconds to wait between requests to avoid rate limits
 
 # Dataset configurations
 class DatasetConfig:
