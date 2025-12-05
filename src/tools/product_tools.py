@@ -10,10 +10,12 @@ from pathlib import Path
 # Load product catalog and company info
 PRODUCT_CATALOG_FILE = Path(__file__).parent.parent.parent / "data" / "product_catalog.json"
 COMPANY_INFO_FILE = Path(__file__).parent.parent.parent / "data" / "company_info.json"
+COMPANY_FAQS_FILE = Path(__file__).parent.parent.parent / "data" / "company_faqs.json"
 
 # Cache the data
 _product_catalog = None
 _company_info = None
+_company_faqs = None
 
 
 def load_product_catalog() -> Dict:
@@ -32,6 +34,15 @@ def load_company_info() -> Dict:
         with open(COMPANY_INFO_FILE, 'r', encoding='utf-8') as f:
             _company_info = json.load(f)
     return _company_info
+
+
+def load_company_faqs() -> List[Dict]:
+    """Load company FAQs from JSON file"""
+    global _company_faqs
+    if _company_faqs is None:
+        with open(COMPANY_FAQS_FILE, 'r', encoding='utf-8') as f:
+            _company_faqs = json.load(f)
+    return _company_faqs
 
 
 @tool
@@ -392,6 +403,97 @@ Your payment information is always safe with TechGear!
         return "Please specify info type: general, contact, shipping, returns, warranty, or payment"
 
 
+@tool
+def search_faqs(question: str) -> str:
+    """
+    Search TechGear's comprehensive FAQ database to answer customer questions.
+    
+    This tool searches through ALL company policies, procedures, and information including:
+    - Contact information and support channels
+    - Payment methods and billing issues  
+    - Sign-up and account management
+    - Complaints and how to file them
+    - Compensation and refund procedures
+    - Product feedback submission
+    - How to purchase products
+    - Account deletion and privacy
+    
+    Use this tool for ANY customer service question - it has comprehensive coverage!
+    
+    Args:
+        question: Customer's question (e.g., "toll-free number", "payment issue", "complaint", "sign up error")
+    
+    Returns:
+        Detailed answer from FAQ database
+    """
+    faqs = load_company_faqs()
+    
+    question_lower = question.lower()
+    matches = []
+    
+    # Search through all FAQs
+    for faq in faqs:
+        score = 0
+        faq_q = faq['question'].lower()
+        faq_a = faq['answer'].lower()
+        faq_category = faq.get('category', '').lower()
+        
+        # Match question keywords
+        for word in question_lower.split():
+            if len(word) > 3:  # Skip short words
+                if word in faq_q:
+                    score += 10
+                if word in faq_a:
+                    score += 3
+                if word in faq_category:
+                    score += 5
+        
+        # Boost scores for exact intent matches
+        intent_keywords = {
+            'contact': ['contact', 'phone', 'email', 'support', 'call', 'reach', 'toll-free', 'number'],
+            'payment': ['payment', 'pay', 'billing', 'charge', 'card', 'paypal'],
+            'complaint': ['complaint', 'complain', 'issue', 'problem', 'report', 'notify'],
+            'signup': ['sign', 'register', 'account', 'create', 'error', 'login'],
+            'refund': ['refund', 'return', 'money', 'reimburs', 'compensation'],
+            'purchase': ['buy', 'purchase', 'order', 'shop', 'get'],
+            'feedback': ['feedback', 'review', 'comment', 'suggest'],
+        }
+        
+        for intent, keywords in intent_keywords.items():
+            if any(kw in question_lower for kw in keywords):
+                if intent in faq.get('intent', '').lower() or intent in faq_category:
+                    score += 15
+        
+        if score > 0:
+            matches.append((score, faq))
+    
+    # Sort by relevance
+    matches.sort(key=lambda x: x[0], reverse=True)
+    
+    if not matches:
+        # Fallback - return contact info
+        return """I'd be happy to help! While I couldn't find a specific FAQ for that, you can always reach our support team:
+
+📞 **Phone**: 1-800-TECHGEAR (1-800-832-4432)
+📧 **Email**: support@techgear.com  
+💬 **Live Chat**: Available 24/7 on our website
+🌐 **Website**: www.techgear.com
+
+Our team is ready to assist you!"""
+    
+    # Return top match(es)
+    if len(matches) == 1 or matches[0][0] > matches[1][0] * 1.5:
+        # Clear winner
+        faq = matches[0][1]
+        return f"{faq['answer']}"
+    else:
+        # Multiple good matches - return top 2
+        result = "Here's what I found:\n\n"
+        for i, (score, faq) in enumerate(matches[:2], 1):
+            result += f"**{i}. {faq['question']}**\n{faq['answer']}\n\n"
+        return result
+
+
 # List of all product tools for easy import
 PRODUCT_TOOLS = [
     search_products,
@@ -399,5 +501,6 @@ PRODUCT_TOOLS = [
     check_product_availability,
     get_product_categories,
     compare_products,
-    get_company_info
+    get_company_info,
+    search_faqs  # NEW: Comprehensive FAQ search
 ]

@@ -3,14 +3,12 @@ Baseline Single-Agent System for comparison with multi-agent approach.
 This agent handles all tasks (triage, knowledge, actions, follow-up) in a single LLM call.
 """
 from typing import Dict, List
-import google.generativeai as genai
-from config import GEMINI_API_KEY, ModelConfig
+from config import ModelConfig
+from utils.llm_client import get_llm_client
 from tools.knowledge_retrieval import knowledge_retriever
 from tools.mock_apis import order_api, refund_api, account_api
 import json
 import re
-
-genai.configure(api_key=GEMINI_API_KEY)
 
 SINGLE_AGENT_PROMPT = """You are a customer support agent. Handle all customer queries comprehensively:
 
@@ -47,16 +45,9 @@ class SingleAgent:
     """Baseline single-agent for comparison with multi-agent system"""
 
     def __init__(self):
-        self.model = genai.GenerativeModel(
-            model_name=ModelConfig.GEMINI_PRO,
-            generation_config={
-                "temperature": ModelConfig.TEMPERATURE,
-                "max_output_tokens": ModelConfig.MAX_OUTPUT_TOKENS,
-                "top_p": ModelConfig.TOP_P,
-                "top_k": ModelConfig.TOP_K,
-            }
-        )
-        print(f"[OK] Single Agent initialized with model: {ModelConfig.GEMINI_PRO}")
+        # Initialize LLM via unified client
+        self._llm_client = get_llm_client(model_name=ModelConfig.PRIMARY_MODEL)
+        print(f"[OK] Single Agent initialized with model: {ModelConfig.PRIMARY_MODEL} (provider: {ModelConfig.LLM_PROVIDER})")
 
     def process(self, customer_query: str, conversation_history: List[Dict] = None, auto_execute: bool = False) -> Dict:
         """
@@ -93,10 +84,9 @@ Customer Query: "{customer_query}"
 Analyze the query, use the knowledge base context, determine actions, and provide a complete response in JSON format.
 """
 
-        # Generate response
+        # Generate response using unified LLM client
         try:
-            response = self.model.generate_content(prompt)
-            response_text = response.text
+            response_text = self._llm_client.generate(prompt)
 
             # Parse JSON response
             json_match = re.search(r'```json\s*(.*?)\s*```', response_text, re.DOTALL)

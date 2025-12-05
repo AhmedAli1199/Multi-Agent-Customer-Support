@@ -48,7 +48,7 @@ class TriageAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Triage Agent",
-            model_name=ModelConfig.GEMINI_PRO,
+            model_name=ModelConfig.PRIMARY_MODEL,  # Uses PRIMARY_MODEL from config
             system_prompt=TRIAGE_SYSTEM_PROMPT
         )
 

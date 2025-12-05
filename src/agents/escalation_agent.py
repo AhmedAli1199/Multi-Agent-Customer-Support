@@ -26,7 +26,7 @@ class EscalationAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Escalation Agent",
-            model_name=ModelConfig.GEMINI_PRO,
+            model_name=ModelConfig.PRIMARY_MODEL,  # Uses PRIMARY_MODEL from config
             system_prompt=ESCALATION_SYSTEM_PROMPT
         )
 

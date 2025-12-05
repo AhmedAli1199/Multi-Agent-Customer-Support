@@ -25,7 +25,7 @@ class KnowledgeAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Knowledge Agent",
-            model_name=ModelConfig.GEMINI_FLASH,  # Use Flash for cost efficiency
+            model_name=ModelConfig.SECONDARY_MODEL,  # Uses SECONDARY_MODEL for cost efficiency
             system_prompt=KNOWLEDGE_SYSTEM_PROMPT
         )
         self.retriever = knowledge_retriever

@@ -1,5 +1,6 @@
 """
 Ablation Study: Analyze impact of individual agent components
+With rate limit protection for LLM API calls.
 """
 import sys
 from pathlib import Path
@@ -8,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from typing import Dict, List
 import json
 import time
-from config import TEST_DATASET_FILE, DATA_DIR, EvalConfig
+from config import TEST_DATASET_FILE, DATA_DIR, EvalConfig, ModelConfig
 from orchestration.state import AgentState
 from agents.triage_agent import TriageAgent
 from agents.knowledge_agent import KnowledgeAgent
@@ -16,6 +17,7 @@ from agents.action_agent import ActionAgent
 from agents.followup_agent import FollowUpAgent
 from agents.escalation_agent import EscalationAgent
 from baseline.single_agent import SingleAgent
+from utils.rate_limit_handler import is_rate_limit_error
 
 class AblationStudy:
     """
@@ -54,17 +56,24 @@ class AblationStudy:
         # Route to appropriate agent
         if route == 'escalation':
             escalation_result = self.escalation_agent.process(query)
-            final_response = escalation_result['response']
+            # Escalation agent returns 'customer_message', not 'response'
+            final_response = escalation_result.get('customer_message', escalation_result.get('escalation_summary', 'Escalated to human agent'))
             agents_used = ['triage', 'escalation']
         elif route == 'action':
             action_result = self.action_agent.process(query, auto_execute=True)
             followup_result = self.followup_agent.process(query)
-            final_response = action_result['response'] + "\n\n" + followup_result['response']
+            # Action agent has 'response', followup has 'follow_up_message'
+            action_response = action_result.get('response', 'Action completed')
+            followup_message = followup_result.get('follow_up_message', '')
+            final_response = action_response + ("\n\n" + followup_message if followup_message else "")
             agents_used = ['triage', 'action', 'followup']
         else:  # knowledge
             knowledge_result = self.knowledge_agent.process(query)
             followup_result = self.followup_agent.process(query)
-            final_response = knowledge_result['response'] + "\n\n" + followup_result['response']
+            # Knowledge agent has 'response', followup has 'follow_up_message'
+            knowledge_response = knowledge_result.get('response', 'Response provided')
+            followup_message = followup_result.get('follow_up_message', '')
+            final_response = knowledge_response + ("\n\n" + followup_message if followup_message else "")
             agents_used = ['triage', 'knowledge', 'followup']
 
         return {
@@ -83,15 +92,16 @@ class AblationStudy:
 
         if route == 'escalation':
             escalation_result = self.escalation_agent.process(query)
-            final_response = escalation_result['response']
+            # Escalation agent returns 'customer_message', not 'response'
+            final_response = escalation_result.get('customer_message', escalation_result.get('escalation_summary', 'Escalated to human agent'))
             agents_used = ['triage', 'escalation']
         elif route == 'action':
             action_result = self.action_agent.process(query, auto_execute=True)
-            final_response = action_result['response']
+            final_response = action_result.get('response', 'Action completed')
             agents_used = ['triage', 'action']
         else:
             knowledge_result = self.knowledge_agent.process(query)
-            final_response = knowledge_result['response']
+            final_response = knowledge_result.get('response', 'Response provided')
             agents_used = ['triage', 'knowledge']
 
         return {
@@ -109,7 +119,7 @@ class AblationStudy:
         action_result = self.action_agent.process(query, auto_execute=True)
 
         return {
-            'response': action_result['response'],
+            'response': action_result.get('response', 'Action completed'),
             'agents_used': ['triage', 'action'],
             'processing_time': time.time() - start_time,
             'configuration': 'action_only'
@@ -124,11 +134,11 @@ class AblationStudy:
 
         if route == 'action':
             action_result = self.action_agent.process(query, auto_execute=True)
-            final_response = action_result['response']
+            final_response = action_result.get('response', 'Action completed')
             agents_used = ['triage', 'action']
         else:
             knowledge_result = self.knowledge_agent.process(query)
-            final_response = knowledge_result['response']
+            final_response = knowledge_result.get('response', 'Response provided')
             agents_used = ['triage', 'knowledge']
 
         return {
@@ -145,57 +155,104 @@ class AblationStudy:
         result = self.single_agent.process(query, auto_execute=False)
 
         return {
-            'response': result['response'],
+            'response': result.get('response', 'Response provided'),
             'agents_used': ['single-agent'],
             'processing_time': time.time() - start_time,
             'configuration': 'baseline'
         }
 
     def evaluate_configuration(self, config_name: str, config_func, sample_size: int = 30) -> Dict:
-        """Evaluate a specific configuration"""
+        """Evaluate a specific configuration with rate limit protection"""
         print(f"\n[INFO] Evaluating {config_name}...")
+        print(f"[INFO] Using: {ModelConfig.LLM_PROVIDER} - {ModelConfig.PRIMARY_MODEL}")
 
         results = []
         test_queries = self.test_data[:sample_size]
+        
+        max_retries = EvalConfig.RATE_LIMIT_MAX_RETRIES
+        retry_delay = EvalConfig.RATE_LIMIT_RETRY_DELAY
 
         for i, test_case in enumerate(test_queries):
             query = test_case['customer_query']
 
-            try:
-                result = config_func(query)
-                results.append(result)
+            for attempt in range(max_retries + 1):
+                try:
+                    result = config_func(query)
+                    results.append(result)
 
-                # Rate limit delay
-                time.sleep(EvalConfig.RATE_LIMIT_DELAY)
+                    # Rate limit delay between calls
+                    time.sleep(EvalConfig.RATE_LIMIT_DELAY)
 
-                if (i + 1) % 10 == 0:
-                    print(f"  Processed {i + 1}/{sample_size} queries...")
+                    if (i + 1) % 5 == 0:
+                        print(f"  Processed {i + 1}/{sample_size} queries...")
+                    
+                    # Success - break retry loop
+                    break
 
-            except Exception as e:
-                print(f"[ERROR] Failed on query {i}: {e}")
-                continue
+                except Exception as e:
+                    if is_rate_limit_error(e):
+                        if attempt < max_retries:
+                            wait_time = retry_delay * (1.5 ** attempt)
+                            print(f"\n[RATE LIMIT] Query {i+1}: Hit rate limit (attempt {attempt + 1}/{max_retries + 1})")
+                            print(f"[RATE LIMIT] Waiting {wait_time:.1f}s before retry...")
+                            time.sleep(wait_time)
+                        else:
+                            print(f"[ERROR] Query {i+1}: Rate limit exceeded after {max_retries} retries")
+                            # Add error result and continue
+                            results.append({
+                                'response': f"RATE_LIMIT_ERROR: {str(e)}",
+                                'agents_used': [],
+                                'processing_time': 0,
+                                'configuration': config_name,
+                                'error': str(e)
+                            })
+                            time.sleep(retry_delay * 2)
+                            break
+                    else:
+                        print(f"[ERROR] Query {i+1} failed: {e}")
+                        results.append({
+                            'response': f"ERROR: {str(e)}",
+                            'agents_used': [],
+                            'processing_time': 0,
+                            'configuration': config_name,
+                            'error': str(e)
+                        })
+                        break
 
+        # Filter successful results for metrics
+        valid_results = [r for r in results if 'error' not in r]
+        
         # Calculate metrics
-        avg_time = sum(r['processing_time'] for r in results) / len(results) if results else 0
-        avg_agents = sum(len(r['agents_used']) for r in results) / len(results) if results else 0
+        avg_time = sum(r['processing_time'] for r in valid_results) / len(valid_results) if valid_results else 0
+        avg_agents = sum(len(r['agents_used']) for r in valid_results) / len(valid_results) if valid_results else 0
 
         metrics = {
             'configuration': config_name,
             'avg_processing_time': avg_time,
             'avg_agents_used': avg_agents,
             'total_queries': len(results),
+            'successful_queries': len(valid_results),
+            'failed_queries': len(results) - len(valid_results),
             'results': results
         }
 
-        print(f"[OK] {config_name}: Avg Time={avg_time:.2f}s, Avg Agents={avg_agents:.1f}")
+        print(f"[OK] {config_name}: Avg Time={avg_time:.2f}s, Avg Agents={avg_agents:.1f}, Success={len(valid_results)}/{len(results)}")
         return metrics
 
     def run_ablation_study(self, sample_size: int = 30) -> Dict:
-        """Run complete ablation study"""
+        """Run complete ablation study with rate limit protection"""
         print("="*80)
         print("ABLATION STUDY")
         print("="*80)
-        print(f"Sample size: {sample_size} queries\n")
+        print(f"Sample size: {sample_size} queries")
+        print(f"\nLLM Configuration:")
+        print(f"  - Provider: {ModelConfig.LLM_PROVIDER}")
+        print(f"  - Primary Model: {ModelConfig.PRIMARY_MODEL}")
+        print(f"  - Secondary Model: {ModelConfig.SECONDARY_MODEL}")
+        print(f"\nRate Limit Settings:")
+        print(f"  - Delay between calls: {EvalConfig.RATE_LIMIT_DELAY}s")
+        print(f"  - Retry delay: {EvalConfig.RATE_LIMIT_RETRY_DELAY}s")
+        print(f"  - Max retries: {EvalConfig.RATE_LIMIT_MAX_RETRIES}")
 
         configurations = {
             'Full System (5 agents)': self.run_full_system,
@@ -247,12 +304,28 @@ class AblationStudy:
         output_path = DATA_DIR / filename
 
         # Remove detailed results for cleaner output
-        summary = {}
+        summary = {
+            "llm_config": {
+                "provider": ModelConfig.LLM_PROVIDER,
+                "primary_model": ModelConfig.PRIMARY_MODEL,
+                "secondary_model": ModelConfig.SECONDARY_MODEL,
+                "temperature": ModelConfig.TEMPERATURE
+            },
+            "rate_limit_config": {
+                "delay_between_calls": EvalConfig.RATE_LIMIT_DELAY,
+                "retry_delay": EvalConfig.RATE_LIMIT_RETRY_DELAY,
+                "max_retries": EvalConfig.RATE_LIMIT_MAX_RETRIES
+            },
+            "configurations": {}
+        }
+        
         for config_name, metrics in results.items():
-            summary[config_name] = {
+            summary["configurations"][config_name] = {
                 'avg_processing_time': metrics['avg_processing_time'],
                 'avg_agents_used': metrics['avg_agents_used'],
-                'total_queries': metrics['total_queries']
+                'total_queries': metrics['total_queries'],
+                'successful_queries': metrics.get('successful_queries', metrics['total_queries']),
+                'failed_queries': metrics.get('failed_queries', 0)
             }
 
         with open(output_path, 'w', encoding='utf-8') as f:

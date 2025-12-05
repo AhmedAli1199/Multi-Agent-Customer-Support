@@ -31,7 +31,7 @@ def check_order_status(order_id: str) -> str:
 - Shipped Date: {order.get('shipped_date', 'Not yet shipped')}
 """
     else:
-        return f"Error: {result['error']}"
+        return f"ORDER_NOT_FOUND: I couldn't find an order with ID '{order_id}'. Please ask the customer to double-check their order ID. They can find it in their order confirmation email or their account order history."
 
 
 @tool
@@ -56,7 +56,11 @@ def cancel_order(order_id: str, reason: str = "Customer request") -> str:
 
 Is there anything else I can help you with?"""
     else:
-        return f"Unable to cancel order: {result['error']}"
+        error = result['error']
+        if "not found" in error.lower():
+            return f"ORDER_NOT_FOUND: I couldn't find an order with ID '{order_id}'. Please ask the customer to verify their order ID from their confirmation email."
+        else:
+            return f"CANNOT_CANCEL: {error}. Please inform the customer about this limitation."
 
 
 @tool

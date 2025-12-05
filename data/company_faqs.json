@@ -103,5 +103,54 @@
     "answer": "Absolutely! TechGear offers expert product guidance:\n\n**Free Resources**:\n- **Product Comparison Tool**: Compare specs side-by-side on our website\n- **Customer Reviews**: Read real customer experiences and ratings\n- **Buying Guides**: Detailed guides for laptops, phones, headphones, and more\n- **Live Chat**: Get instant recommendations from our product experts (24/7)\n\n**Premium Member Benefits**:\n- **Free Tech Consultations**: Schedule a call with our product specialists\n- **Personalized Recommendations**: Based on your needs and budget\n\nJust tell us what you're looking for, and we'll help you find the perfect match!",
     "intent": "product_recommendation",
     "category": "PRODUCTS"
+  },
+  {
+    "id": "complaint_001",
+    "question": "How do I file a complaint with TechGear?",
+    "answer": "We value your feedback and take all concerns seriously. To file a complaint:\n\n**Quick Contact Options**:\n- **Phone**: Call 1-800-TECHGEAR (1-800-832-4432) and ask for a supervisor\n- **Email**: complaints@techgear.com (48-hour response guaranteed)\n- **Live Chat**: Available 24/7 on our website\n- **Mail**: TechGear Customer Relations, 123 Tech Plaza, San Francisco, CA 94105\n\n**What to Include**:\n- Your order number (if applicable)\n- Clear description of the issue\n- Photos or documentation (if relevant)\n- Your preferred resolution\n\n**What Happens Next**:\n- You'll receive a case number for tracking\n- A senior support representative will review your case\n- We'll respond within 48 hours with a resolution plan\n\nYour satisfaction is our priority!",
+    "intent": "file_complaint",
+    "category": "COMPLAINT"
+  },
+  {
+    "id": "complaint_002",
+    "question": "How do I report a payment issue to TechGear?",
+    "answer": "If you're experiencing payment problems, we're here to help:\n\n**For Billing Issues**:\n- **Phone**: Call our billing department at 1-800-TECHGEAR (1-800-832-4432)\n- **Email**: billing@techgear.com with your order number\n- **Live Chat**: 24/7 on our website (mention it's a payment issue)\n\n**Common Payment Issues We Can Help With**:\n- Incorrect charges or duplicate transactions\n- Failed payments that need to be retried\n- Refund status inquiries\n- Payment method updates\n- Authorization holds\n\n**Important**: Have your order number and payment details ready for faster resolution.\n\nWe take payment security seriously and will resolve your issue promptly!",
+    "intent": "payment_issue",
+    "category": "COMPLAINT"
+  },
+  {
+    "id": "account_002",
+    "question": "I'm having trouble signing up for a TechGear account. What should I do?",
+    "answer": "Having trouble with sign-up? Here's how we can help:\n\n**Common Sign-Up Issues**:\n1. **Email Already Registered**: Try logging in or use 'Forgot Password'\n2. **Password Requirements**: Must be 8+ characters with uppercase, lowercase, and number\n3. **Email Not Arriving**: Check spam folder, or try a different email address\n4. **Technical Errors**: Clear browser cache or try a different browser\n\n**Get Help**:\n- **Phone**: 1-800-TECHGEAR (1-800-832-4432) - we can create your account over the phone\n- **Email**: support@techgear.com with \"Sign-Up Issue\" in subject\n- **Live Chat**: Available 24/7 on our website\n\n**Alternative**: You can also shop as a guest and create your account later!\n\nWe'll get you set up quickly!",
+    "intent": "signup_error",
+    "category": "ACCOUNT"
+  },
+  {
+    "id": "account_003",
+    "question": "How do I delete my TechGear account?",
+    "answer": "We're sorry to see you go! To delete your TechGear account:\n\n**Account Deletion Process**:\n1. **Email Request**: Send an email to privacy@techgear.com with:\n   - Subject: \"Account Deletion Request\"\n   - Your account email address\n   - Reason for deletion (optional)\n2. **Verification**: We'll send you a confirmation email to verify it's really you\n3. **Confirmation**: Click the verification link\n4. **Processing**: Your account will be deleted within 7 business days\n\n**What Happens**:\n- All personal information will be permanently deleted\n- Order history will be anonymized (kept for legal/tax purposes)\n- Active orders or warranties will still be honored\n- This action CANNOT be undone\n\n**Alternative**: Consider just unsubscribing from emails instead if you'd like to keep your order history!\n\nContact support@techgear.com if you have questions.",
+    "intent": "delete_account",
+    "category": "ACCOUNT"
+  },
+  {
+    "id": "compensation_001",
+    "question": "How do I request compensation for a problem with my TechGear order?",
+    "answer": "We apologize for any issues with your order. Here's how to request compensation:\n\n**Eligible Situations**:\n- Late delivery beyond the promised date\n- Defective or damaged products\n- Missing items from your order\n- Incorrect items shipped\n- Poor customer service experience\n\n**How to Request Compensation**:\n1. **Contact Us**: Call 1-800-TECHGEAR or email support@techgear.com\n2. **Provide Details**:\n   - Your order number\n   - Description of the problem\n   - Photos (if applicable)\n   - Impact on you\n3. **Review**: Our customer relations team will review your case\n\n**Possible Resolutions**:\n- Full or partial refund\n- Store credit\n- Discount on future purchase\n- Free express shipping on replacement\n- Premium membership trial\n\n**Timeline**: We respond within 24-48 hours with a resolution.\n\nYour satisfaction matters to us!",
+    "intent": "request_compensation",
+    "category": "COMPLAINT"
+  },
+  {
+    "id": "purchase_001",
+    "question": "How do I purchase products from TechGear?",
+    "answer": "Shopping at TechGear is easy! Here's how to make a purchase:\n\n**Online Shopping Steps**:\n1. **Browse**: Visit www.techgear.com or search for products\n2. **Add to Cart**: Click 'Add to Cart' on products you want\n3. **Checkout**: Click cart icon and 'Proceed to Checkout'\n4. **Account**: Log in or continue as guest\n5. **Shipping**: Enter delivery address\n6. **Payment**: Choose payment method and complete purchase\n7. **Confirmation**: You'll receive an order confirmation email\n\n**Other Ways to Buy**:\n- **Phone Orders**: Call 1-800-TECHGEAR (1-800-832-4432)\n- **Live Chat**: Chat with an agent who can process your order\n\n**Benefits of Creating an Account**:\n- Faster checkout\n- Order tracking\n- Saved payment methods\n- Exclusive deals\n\n**Need Help?** Our team is available 24/7 to assist with your purchase!",
+    "intent": "how_to_purchase",
+    "category": "PURCHASE"
+  },
+  {
+    "id": "feedback_001",
+    "question": "How can I provide feedback about a TechGear product?",
+    "answer": "We love hearing from our customers! Share your product feedback:\n\n**Product Reviews** (Recommended):\n- Log into your account at www.techgear.com\n- Go to 'My Orders' and find your product\n- Click 'Write a Review'\n- Rate the product (1-5 stars) and share your experience\n- Your review helps other customers make informed decisions!\n\n**Other Feedback Channels**:\n- **Email**: feedback@techgear.com\n- **Social Media**: Tag us @TechGearSupport on Twitter\n- **Surveys**: Check your email for post-purchase surveys\n\n**Product Issues?** If you have concerns about a product's performance:\n- Contact support@techgear.com or call 1-800-TECHGEAR\n- We can help troubleshoot or process a return/exchange\n\nYour feedback helps us improve - thank you for sharing!",
+    "intent": "product_feedback",
+    "category": "FEEDBACK"
   }
 ]

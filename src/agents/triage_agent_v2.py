@@ -9,107 +9,30 @@ from agents.base_agent import BaseAgent
 from config import ModelConfig
 from utils.helpers import extract_order_id, calculate_sentiment_score
 
-TRIAGE_SYSTEM_PROMPT_V2 = """You are a Triage Agent for TechGear Electronics customer support. Your role is to analyze customer queries and route them to the appropriate specialist agent.
+# Optimized for smaller LLMs - concise with few-shot examples
+TRIAGE_SYSTEM_PROMPT_V2 = """Route customer queries to the correct agent. Reply ONLY with JSON.
 
-**About TechGear Electronics**:
-- Online retailer of electronics (laptops, phones, audio, smart home, gaming, wearables)
-- 2-year warranty, 30-day returns, free shipping over $50
-- Support: 24/7 chat, phone Mon-Fri 9AM-9PM EST
+AGENTS:
+- knowledge: Product info, policies, recommendations, FAQs
+- action: Cancel/modify orders, refunds, check status, account changes, ANY order-related task
+- escalation: ONLY if customer EXPLICITLY demands human OR security issue OR legal threat
 
-**Your Specialist Agents**:
+IMPORTANT: Consider conversation history! If user provides an order ID or number after being asked for one, route to "action".
 
-1. **Knowledge Agent** - Handles informational queries:
-   - Product questions, recommendations, comparisons
-   - Policy questions (shipping, returns, warranty, payment)
-   - Company information, contact details
-   - General how-to questions
-   - Product availability checks
+EXAMPLES:
+User: "Cancel order 12345" → {"route_to":"action","intent":"CANCEL_ORDER","order_id":"12345"}
+User: "What's your return policy?" → {"route_to":"knowledge","intent":"POLICY_QUESTION","order_id":null}
+User: "I want to speak to a manager" → {"route_to":"escalation","intent":"HUMAN_REQUEST","order_id":null}
+User: "Check my order status" → {"route_to":"action","intent":"ORDER_STATUS","order_id":null}
+User: "Show me laptops" → {"route_to":"knowledge","intent":"PRODUCT_SEARCH","order_id":null}
+User: "I want a refund" → {"route_to":"action","intent":"REFUND_REQUEST","order_id":null}
+User: "12345" (after being asked for order ID) → {"route_to":"action","intent":"PROVIDE_ORDER_ID","order_id":"12345"}
+User: "its 99999" → {"route_to":"action","intent":"PROVIDE_ORDER_ID","order_id":"99999"}
 
-2. **Action Agent** - Handles requests requiring system actions:
-   - Cancel order (if not shipped)
-   - Modify order (address, shipping upgrade)
-   - Check order status
-   - Process refunds
-   - Update account information
-   - Reset passwords
+DEFAULT: If user provides a number/ID, assume it's an order ID and route to "action".
+Only use "escalation" for EXPLICIT human requests or security issues. NEVER escalate just because something wasn't found.
 
-3. **Escalation Agent** - ONLY for cases requiring human intervention:
-   - Highly complex technical issues beyond standard support
-   - Severe complaints with legal implications
-   - Cases where customer explicitly demands human agent
-   - Multiple failed attempts to resolve issue
-   - Account security concerns (suspected fraud, unauthorized access)
-
-**IMPORTANT ROUTING RULES**:
-
-✅ Route to **Knowledge Agent** if customer asks:
-- "What products do you have?"
-- "Show me laptops under $1000"
-- "What's your return policy?"
-- "How long does shipping take?"
-- "Is product X in stock?"
-- "What's the difference between these products?"
-- "Can you recommend a good headphone?"
-
-✅ Route to **Action Agent** if customer wants:
-- "Cancel my order #12345"
-- "I want a refund for order #67890"
-- "Change my shipping address"
-- "Check status of order #12345"
-- "I need to modify my order"
-- "Reset my password"
-
-❌ Route to **Escalation Agent** ONLY if:
-- Customer explicitly says "I want to speak to a manager" or "transfer me to human"
-- Severe complaint: "This is unacceptable, I'm calling my lawyer"
-- Multiple failures: This is the 3rd failed attempt to resolve
-- Security issue: "Someone hacked my account"
-- Impossible request: Something none of our agents can handle
-
-**CRITICAL**: Most customer requests can be handled by Knowledge or Action agents. Do NOT escalate unless absolutely necessary!
-
-**Examples of CORRECT Routing**:
-
-Query: "Can you cancel order 12345?"
-→ Route to: ACTION (simple cancellation request)
-
-Query: "What laptops do you have?"
-→ Route to: KNOWLEDGE (product information)
-
-Query: "I want to return my headphones"
-→ Route to: ACTION (return = refund action)
-
-Query: "What's your shipping policy?"
-→ Route to: KNOWLEDGE (policy information)
-
-Query: "I've called 3 times and no one has helped me!"
-→ Route to: ESCALATION (multiple failures)
-
-Query: "Show me gaming keyboards"
-→ Route to: KNOWLEDGE (product search)
-
-**Response Format** (JSON):
-{
-  "intent": "primary intent",
-  "sub_intents": ["any additional intents"],
-  "entities": {
-    "order_id": "extracted order ID or null",
-    "product": "product name or null",
-    "amount": "monetary amount or null"
-  },
-  "urgency": "LOW|MEDIUM|HIGH|CRITICAL",
-  "sentiment": "POSITIVE|NEUTRAL|NEGATIVE",
-  "route_to": "knowledge|action|escalation",
-  "reasoning": "brief explanation of routing decision",
-  "confidence": "high|medium|low"
-}
-
-**Remember**:
-- Knowledge agent can answer 70% of questions
-- Action agent can handle 25% of requests
-- Only 5% need escalation
-- When in doubt between action and escalation → choose ACTION
-- When in doubt between knowledge and escalation → choose KNOWLEDGE"""
+Reply with JSON only: {"route_to":"...", "intent":"...", "order_id":"..." or null}"""
 
 
 class TriageAgentV2(BaseAgent):
@@ -118,7 +41,7 @@ class TriageAgentV2(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Triage Agent V2",
-            model_name=ModelConfig.GEMINI_PRO,
+            model_name=ModelConfig.PRIMARY_MODEL,  # Uses PRIMARY_MODEL from config
             system_prompt=TRIAGE_SYSTEM_PROMPT_V2
         )
 
@@ -129,20 +52,62 @@ class TriageAgentV2(BaseAgent):
         Returns:
             Dict with intent, entities, urgency, routing decision
         """
-        # Build prompt
-        history_context = self.format_conversation_history(conversation_history) if conversation_history else ""
+        # Check if this looks like an order ID being provided (continuation of previous request)
+        query_stripped = customer_query.strip().lower()
+        
+        # Detect if user is providing an order ID (number, or "its <number>", "order <number>", etc.)
+        order_id_patterns = [
+            r'^(?:its?|it\'s|order|order\s*(?:id|number)?[:\s]*)?[\s]*([a-z0-9\-]{3,})$',
+            r'^#?(\d{4,})$',
+            r'^([a-z0-9\-]{5,})$'
+        ]
+        
+        is_order_id_response = False
+        extracted_id = None
+        for pattern in order_id_patterns:
+            match = re.match(pattern, query_stripped, re.IGNORECASE)
+            if match:
+                extracted_id = match.group(1) if match.groups() else query_stripped
+                # Check if previous conversation was asking for order ID
+                if conversation_history and len(conversation_history) > 0:
+                    last_msg = conversation_history[-1].get("content", "").lower()
+                    if any(phrase in last_msg for phrase in ["order id", "order number", "provide", "what is your order"]):
+                        is_order_id_response = True
+                        break
+                # Also route to action if it looks like just an order ID even without history
+                if re.match(r'^[\d\-]{5,}$', extracted_id):
+                    is_order_id_response = True
+                    break
+        
+        # Fast path: if user is providing an order ID, route directly to action
+        if is_order_id_response and extracted_id:
+            analysis = {
+                "route_to": "action",
+                "intent": "PROVIDE_ORDER_ID",
+                "order_id": extracted_id,
+                "sentiment": "NEUTRAL",
+                "reasoning": "User provided order ID in response to previous request"
+            }
+            self.log_interaction(customer_query, json.dumps(analysis, indent=2))
+            return {
+                "agent": self.name,
+                "analysis": analysis,
+                "next_agent": "action"
+            }
 
-        prompt = f"""Analyze this customer query and provide routing decision.
+        # Build context from conversation history for better routing
+        history_context = ""
+        if conversation_history and len(conversation_history) > 0:
+            recent = conversation_history[-2:]  # Last 2 messages
+            history_context = "\nRecent conversation:\n" + "\n".join([
+                f"- {msg.get('role', 'user')}: {msg.get('content', '')[:100]}" 
+                for msg in recent
+            ])
 
-{history_context}
+        # Simple prompt for small LLMs
+        prompt = f"""Customer: "{customer_query}"{history_context}
 
-Customer Query: "{customer_query}"
-
-Analyze the query and determine the best agent to handle it. Remember:
-- Most queries go to Knowledge or Action agents
-- Only escalate if absolutely necessary (explicit request, severe issue, security concern)
-
-Provide your analysis in JSON format."""
+Route this query. Reply with JSON only."""
 
         # Generate response
         response_text = self.generate(prompt)
@@ -150,13 +115,12 @@ Provide your analysis in JSON format."""
         # Parse JSON response
         try:
             # Extract JSON from response
-            json_match = re.search(r'```json\s*(.*?)\s*```', response_text, re.DOTALL)
+            json_match = re.search(r'\{[^{}]*\}', response_text, re.DOTALL)
             if json_match:
-                json_str = json_match.group(1)
+                json_str = json_match.group(0)
+                analysis = json.loads(json_str)
             else:
-                json_str = response_text
-
-            analysis = json.loads(json_str)
+                analysis = self._improved_fallback_analysis(customer_query)
         except json.JSONDecodeError:
             # Fallback parsing with improved logic
             analysis = self._improved_fallback_analysis(customer_query)
@@ -221,6 +185,20 @@ Provide your analysis in JSON format."""
     def _improved_fallback_analysis(self, query: str) -> Dict:
         """Improved fallback analysis with better routing logic"""
         query_lower = query.lower()
+
+        # First check if it looks like an order ID
+        extracted_id = extract_order_id(query)
+        if extracted_id or re.match(r'^[\s]*(its?|it\'s)?[\s]*[\d\-]{4,}[\s]*$', query_lower):
+            return {
+                "intent": "PROVIDE_ORDER_ID",
+                "sub_intents": [],
+                "entities": {"order_id": extracted_id or re.sub(r'[^\d\-]', '', query)},
+                "urgency": "MEDIUM",
+                "sentiment": "NEUTRAL",
+                "route_to": "action",
+                "reasoning": "User provided order ID",
+                "confidence": "high"
+            }
 
         # Check for explicit escalation requests
         escalation_keywords = [

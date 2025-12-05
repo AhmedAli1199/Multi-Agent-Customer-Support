@@ -3,64 +3,48 @@ Knowledge Agent V2: Enhanced with product search tools and company context.
 Uses RAG + product tools for comprehensive information retrieval.
 """
 from typing import Dict, List
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from config import GEMINI_API_KEY, ModelConfig
+from config import ModelConfig
+from utils.llm_client import get_chat_model
 from tools.knowledge_retrieval import knowledge_retriever
 from tools.product_tools import PRODUCT_TOOLS
 
-KNOWLEDGE_SYSTEM_PROMPT = """You are a Knowledge Agent for TechGear Electronics customer support. Your role is to:
+KNOWLEDGE_SYSTEM_PROMPT = """You are a helpful and knowledgeable customer support agent for TechGear Electronics.
 
-1. Answer customer questions about products, policies, and services
-2. Help customers find the right products for their needs
-3. Provide accurate information from our knowledge base and product catalog
-4. Offer excellent customer service with a friendly, professional tone
+YOUR MISSION: ALWAYS help the customer. You have powerful tools - USE THEM!
 
-**About TechGear Electronics**:
-- Leading online retailer of premium electronics since 2015
-- Headquarters: San Francisco, CA
-- Tagline: "Your Trusted Technology Partner"
-- We sell laptops, smartphones, audio equipment, smart home devices, gaming gear, wearables, and accessories
-- All products include 2-year warranty and 30-day return policy
-- Free shipping on orders $50+
-
-**Your Tools**:
-- **search_products**: Find products by keyword or category
-- **get_product_details**: Get full specifications for a specific product
+AVAILABLE TOOLS:
+- **search_faqs**: Search comprehensive FAQ database (payment, complaints, sign-up, contact, refunds, etc.)
+- **get_company_info**: Get policies/info (types: "returns", "shipping", "warranty", "contact", "payment", "general")  
+- **search_products**: Find products by keyword
+- **get_product_details**: Get specifications for a specific product
 - **check_product_availability**: Check if product is in stock
-- **get_product_categories**: Show all product categories
-- **compare_products**: Compare two products side-by-side
-- **get_company_info**: Get company policies, contact info, shipping, returns, etc.
 
-**Key Policies**:
-- **Returns**: 30-day return window, no restocking fee
-- **Shipping**: Free over $50, Standard ($5.99, 5-7 days), Express ($14.99, 2-3 days), Overnight ($29.99, next day)
-- **Warranty**: 2-year standard on all electronics
-- **Support**: 24/7 chat, phone Mon-Fri 9AM-9PM EST
-- **Price Match**: Yes, within 14 days with proof
+WHICH TOOL TO USE:
 
-**How to Help Customers**:
-1. **Product Questions**: Use search_products or get_product_details
-2. **Policy Questions**: Use get_company_info with appropriate type
-3. **Availability**: Use check_product_availability
-4. **General Questions**: Answer using your knowledge of TechGear
+1. **For Customer Service Questions** (toll-free number, payment issues, complaints, sign-up errors, how to purchase, feedback):
+   → Use **search_faqs** - it has comprehensive answers!
+   
+2. **For Policy Questions** (general shipping/returns/warranty):
+   → Use **get_company_info** with type parameter
 
-**Communication Style**:
-- Be warm, friendly, and helpful
-- Use clear, jargon-free language
-- Provide specific product recommendations when asked
-- Always include relevant details (price, availability, shipping)
-- Offer to help with next steps
+3. **For Product Questions** (find laptops, check availability):
+   → Use **search_products** or **get_product_details**
 
-**Important**:
-- If you don't have information, admit it honestly
-- Offer to escalate complex questions to human support
-- Always prioritize customer satisfaction
-- Use tools to get accurate, up-to-date information
+CRITICAL RULES:
+- ALWAYS call a tool before answering - don't guess!
+- For questions about contact info, complaints, payments, sign-ups → USE search_faqs FIRST
+- If search_faqs doesn't help, try get_company_info(type="contact")
+- NEVER say "I don't have information" - provide what you DO find
+- Keep responses helpful, brief (2-4 sentences), and actionable
 
-Remember: You represent TechGear Electronics, so be professional and knowledgeable!"""
-
+Examples:
+- "toll-free number?" → search_faqs("toll-free number") → "You can reach us at 1-800-TECHGEAR..."
+- "payment issue?" → search_faqs("payment issue") → "For billing issues, contact billing@techgear.com..."
+- "how to complain?" → search_faqs("complaint") → "File a complaint via phone 1-800-TECHGEAR or email complaints@techgear.com..."
+- "sign-up error?" → search_faqs("sign up error") → "For sign-up help, contact support@techgear.com or call 1-800-TECHGEAR..."
+"""
 
 class KnowledgeAgentV2:
     """Enhanced Knowledge Agent with product search and company info tools"""
@@ -70,12 +54,10 @@ class KnowledgeAgentV2:
         self.name = "Knowledge Agent V2"
         self.retriever = knowledge_retriever
 
-        # Initialize Gemini
-        self.llm = ChatGoogleGenerativeAI(
-            model=ModelConfig.GEMINI_FLASH,  # Flash for cost efficiency
-            google_api_key=GEMINI_API_KEY,
-            temperature=0.3,  # Lower temperature for factual responses
-            convert_system_message_to_human=True
+        # Initialize LLM via unified client (uses SECONDARY_MODEL for cost efficiency)
+        self.llm = get_chat_model(
+            model_name=ModelConfig.SECONDARY_MODEL,
+            temperature=0.3  # Lower temperature for factual responses
         )
 
         # Create prompt template
@@ -93,17 +75,21 @@ class KnowledgeAgentV2:
             prompt=self.prompt
         )
 
-        # Create agent executor
+        # Create agent executor - allow 3 iterations for: tool call -> observation -> final answer
         self.agent_executor = AgentExecutor(
             agent=self.agent,
             tools=PRODUCT_TOOLS,
             verbose=True,
             handle_parsing_errors=True,
-            max_iterations=4
+            max_iterations=3,  # Need at least 3: think -> tool -> answer
+            early_stopping_method="generate",
+            return_intermediate_steps=True
         )
 
-        print(f"[OK] {self.name} initialized with {len(PRODUCT_TOOLS)} tools")
+        print(f"[OK] {self.name} initialized with {len(PRODUCT_TOOLS)} tools (provider: {ModelConfig.LLM_PROVIDER})")
+        print(f"  Model: {ModelConfig.SECONDARY_MODEL}")
         print(f"  Tools: {', '.join(tool.name for tool in PRODUCT_TOOLS)}")
+        print(f"  Key Tool: search_faqs (comprehensive FAQ database access)")
 
     def process(self, customer_query: str, conversation_history: List[Dict] = None) -> Dict:
         """
@@ -116,21 +102,10 @@ class KnowledgeAgentV2:
         Returns:
             Dict with agent response and metadata
         """
-        # Retrieve relevant context from knowledge base
-        kb_context = self.retriever.get_formatted_context(customer_query, top_k=3)
-
-        # Build enhanced query with context
-        enhanced_query = f"""Customer Question: {customer_query}
-
-Relevant Knowledge Base Information:
-{kb_context}
-
-Please answer the customer's question using the available tools and knowledge base information. Be helpful and specific."""
-
-        # Format conversation history
+        # Format conversation history - only last 3 messages to reduce latency
         chat_history = []
         if conversation_history:
-            for msg in conversation_history[-5:]:
+            for msg in conversation_history[-3:]:  # Reduced from 5 to 3
                 role = msg.get("role", "user")
                 content = msg.get("content", "")
                 if role == "user":
@@ -139,16 +114,17 @@ Please answer the customer's question using the available tools and knowledge ba
                     chat_history.append(("ai", content))
 
         try:
-            # Execute agent
+            # Execute agent with just the customer query (no confusing context injection)
             result = self.agent_executor.invoke({
-                "input": enhanced_query,
+                "input": customer_query,
                 "chat_history": chat_history
             })
 
-            response_text = result.get("output", "I apologize, but I was unable to find information about that.")
+            response_text = result.get("output", "")
 
             # Extract tool calls
             tool_calls = []
+            last_tool_output = ""
             if "intermediate_steps" in result:
                 for step in result["intermediate_steps"]:
                     if len(step) >= 2:
@@ -158,34 +134,42 @@ Please answer the customer's question using the available tools and knowledge ba
                             "input": action.tool_input,
                             "output": observation[:200] + "..." if len(observation) > 200 else observation
                         })
+                        last_tool_output = observation
 
-            # Check if escalation is needed
-            insufficient_indicators = [
-                "don't have information",
-                "don't know",
-                "unable to find",
-                "contact support",
-                "speak with"
+            # FALLBACK: If no response but we got tool output, use that
+            if not response_text or response_text == "Agent stopped due to iteration limit or time limit.":
+                if last_tool_output:
+                    response_text = last_tool_output
+                else:
+                    response_text = "I apologize, but I was unable to find that information. Please try asking in a different way."
+
+            # Check if escalation is needed - ONLY for explicit requests
+            escalation_indicators = [
+                "speak with a human",
+                "talk to a manager", 
+                "transfer to agent",
+                "i cannot help with this"
             ]
-            needs_escalation = any(indicator in response_text.lower() for indicator in insufficient_indicators)
+            needs_escalation = any(indicator in response_text.lower() for indicator in escalation_indicators)
 
             return {
                 "agent": self.name,
                 "response": response_text,
                 "tool_calls": tool_calls,
-                "kb_context_used": kb_context[:200] + "..." if len(kb_context) > 200 else kb_context,
                 "needs_escalation": needs_escalation,
                 "confidence": "low" if needs_escalation else "high"
             }
 
         except Exception as e:
-            error_msg = f"I apologize, but I encountered an issue retrieving that information. Please try rephrasing your question or contact our support team at 1-800-TECHGEAR.\n\nError: {str(e)}"
+            # Log error but DON'T escalate - try to help the customer
+            print(f"[KNOWLEDGE AGENT ERROR] {str(e)}")
+            error_msg = "I apologize, I had trouble processing that request. Could you please rephrase your question?"
 
             return {
                 "agent": self.name,
                 "response": error_msg,
                 "tool_calls": [],
-                "needs_escalation": True,
-                "confidence": "low",
+                "needs_escalation": False,  # Don't escalate on errors - let customer try again
+                "confidence": "medium",
                 "error": str(e)
             }

@@ -41,7 +41,7 @@ class ActionAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Action Agent",
-            model_name=ModelConfig.GEMINI_PRO,  # Use Pro for reliability
+            model_name=ModelConfig.PRIMARY_MODEL,  # Uses PRIMARY_MODEL for reliability
             system_prompt=ACTION_SYSTEM_PROMPT
         )
 

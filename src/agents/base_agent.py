@@ -1,47 +1,37 @@
 """
 Base agent class for all specialized agents.
-Provides common functionality for Gemini LLM integration.
+Provides common functionality for LLM integration via unified LLMClient.
 """
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
-import google.generativeai as genai
-from config import GEMINI_API_KEY, ModelConfig
+from utils.llm_client import get_llm_client
+from config import ModelConfig
 
-# Configure Gemini
-genai.configure(api_key=GEMINI_API_KEY)
 
 class BaseAgent(ABC):
     """Abstract base class for all agents"""
 
-    def __init__(self, name: str, model_name: str, system_prompt: str):
+    def __init__(self, name: str, model_name: str = None, system_prompt: str = ""):
         """
         Initialize base agent.
 
         Args:
             name: Agent name
-            model_name: Gemini model to use (pro or flash)
+            model_name: Model to use (defaults to PRIMARY_MODEL from config)
             system_prompt: System prompt defining agent behavior
         """
         self.name = name
-        self.model_name = model_name
+        self.model_name = model_name or ModelConfig.PRIMARY_MODEL
         self.system_prompt = system_prompt
 
-        # Initialize Gemini model
-        self.model = genai.GenerativeModel(
-            model_name=model_name,
-            generation_config=genai.GenerationConfig(
-                temperature=ModelConfig.TEMPERATURE,
-                max_output_tokens=ModelConfig.MAX_OUTPUT_TOKENS,
-                top_p=ModelConfig.TOP_P,
-                top_k=ModelConfig.TOP_K,
-            )
-        )
+        # Initialize LLM client from unified client
+        self._llm_client = get_llm_client(model_name=self.model_name)
 
-        print(f"[OK] {self.name} initialized with model: {self.model_name}")
+        print(f"[OK] {self.name} initialized with model: {self.model_name} (provider: {ModelConfig.LLM_PROVIDER})")
 
     def generate(self, prompt: str, context: Optional[Dict] = None) -> str:
         """
-        Generate response using Gemini.
+        Generate response using unified LLM client.
 
         Args:
             prompt: User prompt
@@ -56,10 +46,8 @@ class BaseAgent(ABC):
         if context:
             full_prompt = f"{full_prompt}\n\nContext: {context}"
 
-        # Generate response
-        response = self.model.generate_content(full_prompt)
-
-        return response.text
+        # Generate response using LLM client
+        return self._llm_client.generate(full_prompt)
 
     @abstractmethod
     def process(self, customer_query: str, conversation_history: List[Dict] = None) -> Dict:

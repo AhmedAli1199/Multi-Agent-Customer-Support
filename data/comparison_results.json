@@ -1,0 +1,36 @@
+{
+  "sample_size": 20,
+  "llm_config": {
+    "provider": "openai",
+    "primary_model": "gpt-4o",
+    "secondary_model": "gpt-4o-mini",
+    "temperature": 0.7
+  },
+  "multi_agent_metrics": {
+    "first_contact_resolution": 100.0,
+    "average_response_time": 3.3638854583104454,
+    "escalation_rate": 24.0,
+    "csat_score": 5.0,
+    "intent_accuracy": 80.0,
+    "total_queries": 20,
+    "successful_queries": 10,
+    "failed_queries": 10
+  },
+  "single_agent_metrics": {
+    "first_contact_resolution": 0.0,
+    "average_response_time": 10.495626997947692,
+    "escalation_rate": 100.0,
+    "csat_score": 1.445,
+    "intent_accuracy": 70.0,
+    "total_queries": 20,
+    "successful_queries": 20,
+    "failed_queries": 0
+  },
+  "improvements": {
+    "fcr_improvement": 100.0,
+    "art_improvement": 7.131741539637247,
+    "er_improvement": 76.0,
+    "csat_improvement": 3.5549999999999997,
+    "accuracy_improvement": 10.0
+  }
+}

@@ -8,7 +8,7 @@ from orchestration.state import AgentState
 
 # Import V2 agents
 from agents.triage_agent_v2 import TriageAgentV2
-from agents.knowledge_agent_v2 import KnowledgeAgentV2
+from agents.knowledge_agent_simple import SimpleKnowledgeAgent  # Use simple reliable agent
 from agents.action_agent_v2 import ActionAgentV2
 from agents.followup_agent import FollowUpAgent
 from agents.escalation_agent import EscalationAgent
@@ -19,7 +19,7 @@ print("Initializing Enhanced Multi-Agent System V2")
 print("="*60)
 
 triage_agent = TriageAgentV2()
-knowledge_agent = KnowledgeAgentV2()
+knowledge_agent = SimpleKnowledgeAgent()  # Uses SimpleKnowledgeAgent for reliability
 action_agent = ActionAgentV2()
 followup_agent = FollowUpAgent()
 escalation_agent = EscalationAgent()
@@ -92,11 +92,12 @@ def action_node(state: AgentState) -> AgentState:
     state["current_agent"] = "action"
     state["agent_sequence"].append("action")
 
-    # Determine next step based on success
+    # For action requests, skip followup to reduce latency
+    # The action response already confirms what was done
     if result.get("success"):
-        print("[ACTION AGENT] Action executed successfully")
+        print("[ACTION AGENT] Action executed successfully - skipping followup")
         state["resolution_status"] = "resolved"
-        state["next_agent"] = "followup"
+        state["next_agent"] = None  # Skip followup, end workflow
     else:
         print("[ACTION AGENT] Action failed, escalating")
         state["resolution_status"] = "partial"
@@ -197,8 +198,8 @@ def route_after_action(state: AgentState) -> str:
     """Route after action agent"""
     if state.get("needs_escalation"):
         return "escalation"
-    else:
-        return "followup"
+    # Skip followup for successful actions to reduce latency
+    return END
 
 
 # Build workflow graph
@@ -240,8 +241,8 @@ def create_workflow_v2():
         "action",
         route_after_action,
         {
-            "followup": "followup",
-            "escalation": "escalation"
+            "escalation": "escalation",
+            END: END  # Direct end for successful actions
         }
     )
 

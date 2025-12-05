@@ -5,28 +5,18 @@ from typing import Dict, List
 from agents.base_agent import BaseAgent
 from config import ModelConfig
 
-FOLLOWUP_SYSTEM_PROMPT = """You are a Follow-Up Agent for customer support. Your role is to INTELLIGENTLY decide if a follow-up message is needed.
+FOLLOWUP_SYSTEM_PROMPT = """Decide if a follow-up question is needed. Reply with JSON only.
 
-CRITICAL RULES - Follow-up is ONLY needed when:
-1. Complex issue was just resolved (order cancellation, refund, account change)
-2. Multi-step resolution that needs confirmation
-3. Customer showed frustration/negative sentiment that needs smoothing
-4. Action was taken that customer should acknowledge
+Rules:
+- needs_followup=true: Only for complex resolved actions (refunds, cancellations) or frustrated customers
+- needs_followup=false: For simple info queries, product questions, policy answers
 
-DO NOT send follow-up for:
-- Simple information queries (policies, product info, contact details)
-- Questions that were just answered with information
-- Ongoing conversations (customer will respond if they need more)
-- Cases where the main response already ended conversationally
+Reply format: {"needs_followup": true/false, "message": "..." or ""}
 
-Response Format:
-{
-  "needs_followup": true/false,
-  "reason": "brief explanation",
-  "message": "follow-up message (only if needs_followup=true, otherwise empty)"
-}
-
-If needs_followup=true, keep message under 30 words and conversational."""
+Examples:
+- Simple policy question → {"needs_followup": false, "message": ""}
+- Order cancelled → {"needs_followup": true, "message": "Is there anything else I can help with?"}
+- Product info → {"needs_followup": false, "message": ""}"""
 
 class FollowUpAgent(BaseAgent):
     """Follow-up agent for customer satisfaction"""
@@ -34,7 +24,7 @@ class FollowUpAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Follow-Up Agent",
-            model_name=ModelConfig.GEMINI_FLASH,
+            model_name=ModelConfig.SECONDARY_MODEL,  # Uses SECONDARY_MODEL for cost efficiency
             system_prompt=FOLLOWUP_SYSTEM_PROMPT
         )
 
@@ -57,21 +47,12 @@ class FollowUpAgent(BaseAgent):
         history_context = self.format_conversation_history(conversation_history) if conversation_history else ""
         agents_used = ', '.join(agent_sequence) if agent_sequence else "unknown"
 
-        prompt = f"""Analyze this customer interaction and decide if a follow-up message is needed:
+        # Simple, concise prompt for small LLMs
+        prompt = f"""Query: "{customer_query}"
+Agents used: {agents_used}
+Resolution: {resolution_summary or "Answered"}
 
-{history_context}
-
-Customer Query: "{customer_query}"
-Resolution: {resolution_summary or "Issue addressed"}
-Agents Used: {agents_used}
-
-Analyze:
-1. Was this a simple info query or complex action?
-2. Did the response already end conversationally?
-3. Does customer likely need reassurance or confirmation?
-4. Was there negative sentiment that needs smoothing?
-
-Respond in JSON format as specified in your instructions."""
+Should we follow up? Reply JSON only."""
 
         response_text = self.generate(prompt)
 

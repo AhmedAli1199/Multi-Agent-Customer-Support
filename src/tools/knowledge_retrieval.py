@@ -5,12 +5,9 @@ import json
 from typing import List, Dict
 from chromadb import Client
 from chromadb.config import Settings
-import google.generativeai as genai
 
-from config import GEMINI_API_KEY, CHROMA_DB_DIR, AgentConfig, ModelConfig, KNOWLEDGE_BASE_FILE
-
-# Configure Gemini
-genai.configure(api_key=GEMINI_API_KEY)
+from config import CHROMA_DB_DIR, AgentConfig, ModelConfig, KNOWLEDGE_BASE_FILE
+from utils.llm_client import get_embedding_function
 
 class KnowledgeRetriever:
     """Retrieval-Augmented Generation using Chroma vector store"""
@@ -38,6 +35,19 @@ class KnowledgeRetriever:
 
         print(f"[OK] Knowledge retriever initialized with {len(self.knowledge_base)} KB entries")
 
+        # Initialize embedding function (lazy loaded when needed)
+        self._embed_fn = None
+
+    def _get_embed_function(self):
+        """Lazy load embedding function"""
+        if self._embed_fn is None:
+            try:
+                self._embed_fn = get_embedding_function()
+            except Exception as e:
+                print(f"[WARN] Could not initialize embeddings: {e}")
+                self._embed_fn = None
+        return self._embed_fn
+
     def retrieve(self, query: str, top_k: int = None) -> List[Dict]:
         """
         Retrieve relevant documents from vector store.
@@ -57,16 +67,17 @@ class KnowledgeRetriever:
             return self._fallback_search(query, top_k)
 
         try:
-            # Generate query embedding
-            query_embedding = genai.embed_content(
-                model=ModelConfig.EMBEDDING_MODEL,
-                content=query,
-                task_type="retrieval_query"
-            )
+            # Get embedding function
+            embed_fn = self._get_embed_function()
+            if embed_fn is None:
+                return self._fallback_search(query, top_k)
+
+            # Generate query embedding using unified client
+            query_embedding = embed_fn(query, task_type="retrieval_query")
 
             # Query vector store
             results = self.collection.query(
-                query_embeddings=[query_embedding['embedding']],
+                query_embeddings=[query_embedding],
                 n_results=top_k
             )
 

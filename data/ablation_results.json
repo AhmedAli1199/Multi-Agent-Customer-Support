@@ -1,0 +1,50 @@
+{
+  "llm_config": {
+    "provider": "openai",
+    "primary_model": "gpt-4o",
+    "secondary_model": "gpt-4o-mini",
+    "temperature": 0.7
+  },
+  "rate_limit_config": {
+    "delay_between_calls": 2.0,
+    "retry_delay": 20.0,
+    "max_retries": 3
+  },
+  "configurations": {
+    "Full System (5 agents)": {
+      "avg_processing_time": 7.034816586971283,
+      "avg_agents_used": 3.0,
+      "total_queries": 20,
+      "successful_queries": 20,
+      "failed_queries": 0
+    },
+    "No Follow-Up (4 agents)": {
+      "avg_processing_time": 5.566989076137543,
+      "avg_agents_used": 2.0,
+      "total_queries": 20,
+      "successful_queries": 20,
+      "failed_queries": 0
+    },
+    "Action Only (2 agents)": {
+      "avg_processing_time": 4.253337132930755,
+      "avg_agents_used": 2.0,
+      "total_queries": 20,
+      "successful_queries": 20,
+      "failed_queries": 0
+    },
+    "Minimal (2 agents)": {
+      "avg_processing_time": 6.146056830883026,
+      "avg_agents_used": 2.0,
+      "total_queries": 20,
+      "successful_queries": 20,
+      "failed_queries": 0
+    },
+    "Baseline (single-agent)": {
+      "avg_processing_time": 3.696093165874481,
+      "avg_agents_used": 1.0,
+      "total_queries": 20,
+      "successful_queries": 20,
+      "failed_queries": 0
+    }
+  }
+}

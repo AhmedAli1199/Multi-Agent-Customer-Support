@@ -1,617 +1,686 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multi-Agent Customer Support</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            width: 100%;
-            max-width: 1400px;
-            height: 90vh;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        /* Chat Section */
-        .chat-section {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            border-right: 2px solid #e0e0e0;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-header h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .mode-toggle {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .toggle-slider {
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.3s;
-        }
-
-        .toggle-switch.active .toggle-slider {
-            left: 33px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-
-        .message {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.user {
-            flex-direction: row-reverse;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .message.user .message-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .message.assistant .message-avatar {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .message-content {
-            max-width: 70%;
-            margin: 0 15px;
-        }
-
-        .message-bubble {
-            padding: 15px 20px;
-            border-radius: 18px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-
-        .message.user .message-bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.assistant .message-bubble {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .message-time {
-            font-size: 11px;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        .typing-indicator {
-            display: none;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            border-radius: 18px;
-            width: fit-content;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .typing-indicator.active {
-            display: flex;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            margin: 0 3px;
-            background: #667eea;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .chat-input-area {
-            padding: 20px;
-            background: white;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .input-wrapper {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        #messageInput {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        #messageInput:focus {
-            border-color: #667eea;
-        }
-
-        #sendButton {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        #sendButton:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        #sendButton:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Agent Workflow Section */
-        .workflow-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #fafafa;
-        }
-
-        .workflow-header {
-            background: #2d3748;
-            color: white;
-            padding: 20px;
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .workflow-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .agent-card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .agent-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .agent-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .agent-icon.triage {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .agent-icon.knowledge {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .agent-icon.action {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-
-        .agent-icon.followup {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-
-        .agent-icon.escalation {
-            background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
-        }
-
-        .agent-name {
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        .agent-status {
-            margin-left: auto;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .agent-status.active {
-            background: #48bb78;
-            color: white;
-        }
-
-        .agent-status.completed {
-            background: #e0e0e0;
-            color: #666;
-        }
-
-        .agent-details {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .agent-details strong {
-            color: #2d3748;
-        }
-
-        .workflow-timeline {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .timeline-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #667eea;
-            margin-right: 10px;
-        }
-
-        .timeline-text {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .stats-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .stat-item:last-child {
-            border-bottom: none;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 13px;
-        }
-
-        .stat-value {
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #764ba2;
-        }
+      :root {
+        --primary-color: #5a6b5d;
+        --primary-light: #7a8b7d;
+        --primary-dark: #4a5b4d;
+        --secondary-color: #8b9a8d;
+        --accent-color: #a3b5a6;
+        --background-light: #f5f7f5;
+        --background-white: #ffffff;
+        --text-dark: #2d3a2e;
+        --text-medium: #4a5a4c;
+        --text-light: #6b7b6d;
+        --border-color: #d4ddd5;
+        --shadow-light: rgba(90, 107, 93, 0.1);
+        --shadow-medium: rgba(90, 107, 93, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, var(--background-light) 0%, #e8ede9 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        display: flex;
+        width: 100%;
+        max-width: 1400px;
+        height: 90vh;
+        background: var(--background-white);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px var(--shadow-medium);
+        overflow: hidden;
+      }
+
+      /* Chat Section */
+      .chat-section {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border-color);
+      }
+
+      .chat-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: white;
+        padding: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .chat-header h1 {
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .mode-toggle {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .toggle-switch.active {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .toggle-slider {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+
+      .toggle-switch.active .toggle-slider {
+        left: 33px;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: var(--background-light);
+      }
+
+      .message {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.user {
+        flex-direction: row-reverse;
+      }
+
+      .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .message.user .message-avatar {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      }
+
+      .message.assistant .message-avatar {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+      }
+
+      .message-content {
+        max-width: 70%;
+        margin: 0 15px;
+      }
+
+      .message-bubble {
+        padding: 15px 20px;
+        border-radius: 18px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .message.user .message-bubble {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message.assistant .message-bubble {
+        background: var(--background-white);
+        color: var(--text-dark);
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 10px var(--shadow-light);
+      }
+
+      .message-time {
+        font-size: 11px;
+        color: var(--text-light);
+        margin-top: 5px;
+      }
+
+      .typing-indicator {
+        display: none;
+        align-items: center;
+        padding: 15px;
+        background: var(--background-white);
+        border-radius: 18px;
+        width: fit-content;
+        box-shadow: 0 2px 10px var(--shadow-light);
+      }
+
+      .typing-indicator.active {
+        display: flex;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .chat-input-area {
+        padding: 20px;
+        background: var(--background-white);
+        border-top: 1px solid var(--border-color);
+      }
+
+      .input-wrapper {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      #messageInput {
+        flex: 1;
+        padding: 15px 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.3s;
+        background: var(--background-light);
+      }
+
+      #messageInput:focus {
+        border-color: var(--primary-color);
+        background: var(--background-white);
+      }
+
+      #sendButton {
+        padding: 15px 30px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      #sendButton:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px var(--shadow-medium);
+      }
+
+      #sendButton:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Agent Workflow Section */
+      .workflow-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--background-light);
+      }
+
+      .workflow-header {
+        background: var(--primary-dark);
+        color: white;
+        padding: 20px;
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      .workflow-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .agent-card {
+        background: var(--background-white);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px var(--shadow-light);
+        animation: fadeIn 0.5s ease-out;
+        border-left: 4px solid var(--primary-color);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .agent-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .agent-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .agent-icon.triage {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      }
+
+      .agent-icon.knowledge {
+        background: linear-gradient(135deg, #6b8e7b 0%, #8bb09a 100%);
+      }
+
+      .agent-icon.action {
+        background: linear-gradient(135deg, #5a7a6a 0%, #7a9a8a 100%);
+      }
+
+      .agent-icon.followup {
+        background: linear-gradient(135deg, #7a9b8a 0%, #9abba9 100%);
+      }
+
+      .agent-icon.escalation {
+        background: linear-gradient(135deg, #8a7b6a 0%, #a99b8a 100%);
+      }
+
+      .agent-name {
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .agent-status {
+        margin-left: auto;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .agent-status.active {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .agent-status.completed {
+        background: var(--accent-color);
+        color: var(--text-dark);
+      }
+
+      .agent-details {
+        font-size: 13px;
+        color: var(--text-medium);
+        line-height: 1.6;
+      }
+
+      .agent-details strong {
+        color: var(--text-dark);
+      }
+
+      .workflow-timeline {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .timeline-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .timeline-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        margin-right: 10px;
+      }
+
+      .timeline-text {
+        font-size: 13px;
+        color: var(--text-medium);
+      }
+
+      .stats-panel {
+        background: var(--background-white);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 15px;
+        border: 1px solid var(--border-color);
+      }
+
+      .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--background-light);
+      }
+
+      .stat-item:last-child {
+        border-bottom: none;
+      }
+
+      .stat-label {
+        color: var(--text-medium);
+        font-size: 13px;
+      }
+
+      .stat-value {
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--background-light);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-color);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <!-- Chat Section -->
-        <div class="chat-section">
-            <div class="chat-header">
-                <h1>🤖 AI Customer Support</h1>
-                <div class="mode-toggle">
-                    <span style="font-size: 14px;">Single Agent</span>
-                    <div class="toggle-switch active" id="modeToggle">
-                        <div class="toggle-slider"></div>
-                    </div>
-                    <span style="font-size: 14px;">Multi-Agent</span>
-                </div>
+      <!-- Chat Section -->
+      <div class="chat-section">
+        <div class="chat-header">
+          <h1>AI Customer Support</h1>
+          <div class="mode-toggle">
+            <button
+              id="clearChatBtn"
+              style="
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 15px;
+                cursor: pointer;
+                margin-right: 15px;
+                font-size: 12px;
+              "
+            >
+              Clear Chat
+            </button>
+            <span style="font-size: 14px">Single Agent</span>
+            <div class="toggle-switch active" id="modeToggle">
+              <div class="toggle-slider"></div>
             </div>
+            <span style="font-size: 14px">Multi-Agent</span>
+          </div>
+        </div>
 
-            <div class="chat-messages" id="chatMessages">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message assistant">
+            <div class="message-avatar">AI</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Hello! I'm your AI customer support assistant. How can I help
+                you today?
+              </div>
+              <div class="message-time">Just now</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="messageInput"
+              placeholder="Type your message here..."
+              autocomplete="off"
+            />
+            <button id="sendButton">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Workflow Section -->
+      <div class="workflow-section">
+        <div class="workflow-header">Agent Workflow</div>
+        <div class="workflow-content" id="workflowContent">
+          <div style="text-align: center; color: var(--text-light); margin-top: 50px">
+            Send a message to see the agent workflow
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const chatMessages = document.getElementById("chatMessages");
+      const messageInput = document.getElementById("messageInput");
+      const sendButton = document.getElementById("sendButton");
+      const modeToggle = document.getElementById("modeToggle");
+      const workflowContent = document.getElementById("workflowContent");
+      const clearChatBtn = document.getElementById("clearChatBtn");
+
+      let isMultiAgent = true;
+      let conversationHistory = [];
+
+      // Clear conversation history on page load/refresh
+      window.addEventListener("load", () => {
+        conversationHistory = [];
+        console.log("Conversation history cleared on page load");
+      });
+
+      // Clear chat button
+      clearChatBtn.addEventListener("click", () => {
+        conversationHistory = [];
+        chatMessages.innerHTML = `
                 <div class="message assistant">
                     <div class="message-avatar">AI</div>
                     <div class="message-content">
                         <div class="message-bubble">
-                            Hello! 👋 I'm your AI customer support assistant. How can I help you today?
+                            Hello! I'm your AI customer support assistant. How can I help you today?
                         </div>
                         <div class="message-time">Just now</div>
                     </div>
                 </div>
-            </div>
+            `;
+        workflowContent.innerHTML =
+          '<div style="text-align: center; color: var(--text-light); margin-top: 50px;">Send a message to see the agent workflow</div>';
+        console.log("Chat cleared");
+      });
 
-            <div class="chat-input-area">
-                <div class="input-wrapper">
-                    <input
-                        type="text"
-                        id="messageInput"
-                        placeholder="Type your message here..."
-                        autocomplete="off"
-                    >
-                    <button id="sendButton">Send</button>
-                </div>
-            </div>
-        </div>
+      // Toggle multi-agent mode
+      modeToggle.addEventListener("click", () => {
+        isMultiAgent = !isMultiAgent;
+        modeToggle.classList.toggle("active");
+      });
 
-        <!-- Agent Workflow Section -->
-        <div class="workflow-section">
-            <div class="workflow-header">
-                🔄 Agent Workflow
-            </div>
-            <div class="workflow-content" id="workflowContent">
-                <div style="text-align: center; color: #999; margin-top: 50px;">
-                    Send a message to see the agent workflow
-                </div>
-            </div>
-        </div>
-    </div>
+      // Send message on Enter key
+      messageInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
 
-    <script>
-        const chatMessages = document.getElementById('chatMessages');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        const modeToggle = document.getElementById('modeToggle');
-        const workflowContent = document.getElementById('workflowContent');
+      // Send button click
+      sendButton.addEventListener("click", sendMessage);
 
-        let isMultiAgent = true;
-        let conversationHistory = [];
+      async function sendMessage() {
+        const message = messageInput.value.trim();
+        if (!message) return;
 
-        // Toggle multi-agent mode
-        modeToggle.addEventListener('click', () => {
-            isMultiAgent = !isMultiAgent;
-            modeToggle.classList.toggle('active');
-        });
+        // Add user message
+        addMessage("user", message);
+        conversationHistory.push({ role: "user", content: message });
 
-        // Send message on Enter key
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
+        // Clear input
+        messageInput.value = "";
+        sendButton.disabled = true;
 
-        // Send button click
-        sendButton.addEventListener('click', sendMessage);
+        // Show typing indicator
+        showTypingIndicator();
 
-        async function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message) return;
+        // Clear workflow for new message
+        workflowContent.innerHTML = "";
 
-            // Add user message
-            addMessage('user', message);
-            conversationHistory.push({role: 'user', content: message});
+        try {
+          const response = await fetch("/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: message,
+              conversation_history: conversationHistory,
+              use_multi_agent: isMultiAgent,
+              auto_execute: true,
+            }),
+          });
 
-            // Clear input
-            messageInput.value = '';
-            sendButton.disabled = true;
+          const data = await response.json();
 
-            // Show typing indicator
-            showTypingIndicator();
+          // Hide typing indicator
+          hideTypingIndicator();
 
-            // Clear workflow for new message
-            workflowContent.innerHTML = '';
+          // Add assistant response
+          addMessage("assistant", data.response);
+          conversationHistory.push({
+            role: "assistant",
+            content: data.response,
+          });
 
-            try {
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        conversation_history: conversationHistory,
-                        use_multi_agent: isMultiAgent,
-                        auto_execute: true
-                    })
-                });
-
-                const data = await response.json();
-
-                // Hide typing indicator
-                hideTypingIndicator();
-
-                // Add assistant response
-                addMessage('assistant', data.response);
-                conversationHistory.push({role: 'assistant', content: data.response});
-
-                // Update workflow visualization
-                updateWorkflow(data);
-
-            } catch (error) {
-                hideTypingIndicator();
-                addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
-                console.error('Error:', error);
-            }
-
-            sendButton.disabled = false;
+          // Update workflow visualization
+          updateWorkflow(data);
+        } catch (error) {
+          hideTypingIndicator();
+          addMessage(
+            "assistant",
+            "Sorry, I encountered an error. Please try again."
+          );
+          console.error("Error:", error);
         }
 
-        function addMessage(type, content) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
+        sendButton.disabled = false;
+      }
 
-            const avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-            avatar.textContent = type === 'user' ? 'U' : 'AI';
+      function addMessage(type, content) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${type}`;
 
-            const messageContent = document.createElement('div');
-            messageContent.className = 'message-content';
+        const avatar = document.createElement("div");
+        avatar.className = "message-avatar";
+        avatar.textContent = type === "user" ? "U" : "AI";
 
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-            bubble.textContent = content;
+        const messageContent = document.createElement("div");
+        messageContent.className = "message-content";
 
-            const time = document.createElement('div');
-            time.className = 'message-time';
-            time.textContent = new Date().toLocaleTimeString();
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+        bubble.textContent = content;
 
-            messageContent.appendChild(bubble);
-            messageContent.appendChild(time);
+        const time = document.createElement("div");
+        time.className = "message-time";
+        time.textContent = new Date().toLocaleTimeString();
 
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(messageContent);
+        messageContent.appendChild(bubble);
+        messageContent.appendChild(time);
 
-            // Remove typing indicator if exists
-            const typingIndicator = chatMessages.querySelector('.typing-indicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(messageContent);
 
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Remove typing indicator if exists
+        const typingIndicator = chatMessages.querySelector(".typing-indicator");
+        if (typingIndicator) {
+          typingIndicator.remove();
         }
 
-        function showTypingIndicator() {
-            const indicator = document.createElement('div');
-            indicator.className = 'message assistant';
-            indicator.innerHTML = `
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function showTypingIndicator() {
+        const indicator = document.createElement("div");
+        indicator.className = "message assistant";
+        indicator.innerHTML = `
                 <div class="message-avatar">AI</div>
                 <div class="message-content">
                     <div class="typing-indicator active">
@@ -621,63 +690,69 @@
                     </div>
                 </div>
             `;
-            chatMessages.appendChild(indicator);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatMessages.appendChild(indicator);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+        const indicator = chatMessages.querySelector(
+          ".message.assistant:last-child"
+        );
+        if (indicator && indicator.querySelector(".typing-indicator")) {
+          indicator.remove();
         }
+      }
 
-        function hideTypingIndicator() {
-            const indicator = chatMessages.querySelector('.message.assistant:last-child');
-            if (indicator && indicator.querySelector('.typing-indicator')) {
-                indicator.remove();
-            }
-        }
+      function updateWorkflow(data) {
+        const agentSequence = data.agent_sequence || ["single-agent"];
+        const intent = data.intent || "Unknown";
+        const processingTime = data.processing_time || 0;
+        const systemType = data.system_type || "single-agent";
 
-        function updateWorkflow(data) {
-            const agentSequence = data.agent_sequence || ['single-agent'];
-            const intent = data.intent || 'Unknown';
-            const processingTime = data.processing_time || 0;
-            const systemType = data.system_type || 'single-agent';
+        let workflowHTML = "";
 
-            let workflowHTML = '';
-
-            // Add agent cards
-            if (systemType === 'multi-agent') {
-                agentSequence.forEach((agent, index) => {
-                    const agentInfo = getAgentInfo(agent);
-                    workflowHTML += `
+        // Add agent cards
+        if (systemType === "multi-agent") {
+          agentSequence.forEach((agent, index) => {
+            const agentInfo = getAgentInfo(agent);
+            workflowHTML += `
                         <div class="agent-card">
                             <div class="agent-header">
                                 <div class="agent-icon ${agent}">${agentInfo.icon}</div>
                                 <div class="agent-name">${agentInfo.name}</div>
-                                <div class="agent-status completed">✓</div>
+                                <div class="agent-status completed">Done</div>
                             </div>
                             <div class="agent-details">
                                 ${agentInfo.description}
                             </div>
                         </div>
                     `;
-                });
-            } else {
-                workflowHTML = `
+          });
+        } else {
+          workflowHTML = `
                     <div class="agent-card">
                         <div class="agent-header">
-                            <div class="agent-icon triage">🤖</div>
+                            <div class="agent-icon triage">SA</div>
                             <div class="agent-name">Single Agent</div>
-                            <div class="agent-status completed">✓</div>
+                            <div class="agent-status completed">Done</div>
                         </div>
                         <div class="agent-details">
                             Handled all tasks in a single LLM call
                         </div>
                     </div>
                 `;
-            }
+        }
 
-            // Add stats panel
-            workflowHTML += `
+        // Add stats panel
+        workflowHTML += `
                 <div class="stats-panel">
                     <div class="stat-item">
                         <div class="stat-label">System Type</div>
-                        <div class="stat-value">${systemType === 'multi-agent' ? 'Multi-Agent' : 'Single-Agent'}</div>
+                        <div class="stat-value">${
+                          systemType === "multi-agent"
+                            ? "Multi-Agent"
+                            : "Single-Agent"
+                        }</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Intent Detected</div>
@@ -689,52 +764,56 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Processing Time</div>
-                        <div class="stat-value">${processingTime.toFixed(2)}s</div>
+                        <div class="stat-value">${processingTime.toFixed(
+                          2
+                        )}s</div>
                     </div>
                 </div>
             `;
 
-            workflowContent.innerHTML = workflowHTML;
-        }
+        workflowContent.innerHTML = workflowHTML;
+      }
 
-        function getAgentInfo(agentType) {
-            const agents = {
-                'triage': {
-                    name: 'Triage Agent',
-                    icon: '🎯',
-                    description: 'Classified intent and routed to appropriate agent'
-                },
-                'knowledge': {
-                    name: 'Knowledge Agent',
-                    icon: '📚',
-                    description: 'Retrieved relevant information from knowledge base'
-                },
-                'action': {
-                    name: 'Action Agent',
-                    icon: '⚡',
-                    description: 'Executed backend operations and actions'
-                },
-                'followup': {
-                    name: 'Follow-Up Agent',
-                    icon: '💬',
-                    description: 'Checked customer satisfaction and offered assistance'
-                },
-                'escalation': {
-                    name: 'Escalation Agent',
-                    icon: '🚨',
-                    description: 'Prepared handoff to human agent'
-                }
-            };
+      function getAgentInfo(agentType) {
+        const agents = {
+          triage: {
+            name: "Triage Agent",
+            icon: "TR",
+            description: "Classified intent and routed to appropriate agent",
+          },
+          knowledge: {
+            name: "Knowledge Agent",
+            icon: "KN",
+            description: "Retrieved relevant information from knowledge base",
+          },
+          action: {
+            name: "Action Agent",
+            icon: "AC",
+            description: "Executed backend operations and actions",
+          },
+          followup: {
+            name: "Follow-Up Agent",
+            icon: "FU",
+            description: "Checked customer satisfaction and offered assistance",
+          },
+          escalation: {
+            name: "Escalation Agent",
+            icon: "ES",
+            description: "Prepared handoff to human agent",
+          },
+        };
 
-            return agents[agentType] || {
-                name: 'Unknown Agent',
-                icon: '❓',
-                description: 'Agent information not available'
-            };
-        }
+        return (
+          agents[agentType] || {
+            name: "Unknown Agent",
+            icon: "??",
+            description: "Agent information not available",
+          }
+        );
+      }
 
-        // Auto-focus input on load
-        messageInput.focus();
+      // Auto-focus input on load
+      messageInput.focus();
     </script>
-</body>
+  </body>
 </html>

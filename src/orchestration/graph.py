@@ -8,14 +8,14 @@ from orchestration.state import AgentState
 
 # Import agents
 from agents.triage_agent import TriageAgent
-from agents.knowledge_agent import KnowledgeAgent
+from agents.knowledge_agent_simple import SimpleKnowledgeAgent  # Use simple, reliable agent
 from agents.action_agent import ActionAgent
 from agents.followup_agent import FollowUpAgent
 from agents.escalation_agent import EscalationAgent
 
 # Initialize agents
 triage_agent = TriageAgent()
-knowledge_agent = KnowledgeAgent()
+knowledge_agent = SimpleKnowledgeAgent()  # Switched to simple agent
 action_agent = ActionAgent()
 followup_agent = FollowUpAgent()
 escalation_agent = EscalationAgent()
